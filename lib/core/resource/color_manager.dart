@@ -1,0 +1,22 @@
+import 'package:flutter/material.dart';
+
+class ColorManager {
+  ColorManager._();
+
+//! write lowerCamelCase
+
+  static const Color brown = Color(0xffB8A47C);
+  static const Color darkGreen = Color(0xff25624F);
+  static const Color gray = Color(0xff817D7D);
+  static const Color red = Color(0xffEB2222);
+  static const Color lightBrown = Color(0xffB8A57B);
+  static const Color oldBrown = Color(0xffA39A5C);
+}
+/*
+why using const ?
+less rebuilds
+improve performance
+less memory allocation
+faster rendering
+
+*/
