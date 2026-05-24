@@ -22,3 +22,7 @@ class EmptyCacheFailure
 
   EmptyCacheFailure(super.message);
 }
+
+class EmptyDataFailure extends Failure {
+  EmptyDataFailure(super.message);
+}

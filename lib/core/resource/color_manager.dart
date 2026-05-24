@@ -10,7 +10,9 @@ class ColorManager {
   static const Color gray = Color(0xff817D7D);
   static const Color red = Color(0xffEB2222);
   static const Color lightBrown = Color(0xffB8A57B);
+  static const Color extraLightBaieg = Color(0xffF9F6EB);
   static const Color oldBrown = Color(0xffA39A5C);
+
 }
 /*
 why using const ?

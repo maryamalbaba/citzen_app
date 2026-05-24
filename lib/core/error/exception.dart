@@ -1,3 +1,5 @@
+import 'package:citzenapp/core/error/faliure.dart';
+
 class ServerException implements Exception {
   final String message;
 
@@ -23,6 +25,8 @@ class EmptyCacheException
 
   EmptyCacheException(this.message);
 }
+
+
 
 /*Exception
  تحدث داخل:
