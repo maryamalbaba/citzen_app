@@ -1,3 +1,4 @@
+import 'package:citzenapp/core/resource/baseurl.dart';
 import 'package:citzenapp/core/service/apiConsumer.dart';
 import 'package:citzenapp/core/service/reqestType.dart';
 import 'package:citzenapp/feature/auth/register/data/model/requestmodel.dart';
@@ -19,7 +20,7 @@ class AuthRemoteDataSourceImpl
 
     final response = await api.request(
       path:
-          '/api/auth/register/citizen',
+          url.rgister, // تأكدي من تحديث هذا المسار حسب الـ API الخاص بكِ
 
       method: RequestType.post,
 

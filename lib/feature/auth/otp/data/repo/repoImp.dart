@@ -31,12 +31,14 @@ final response=await  remote.OtpStep(otp_model: otp);
       }
 
        /// TOKEN
-      final token =
-          response['data']['token'];
+      /// 1. استخراج التوكن والريفريش توكن من الاستجابة
+      final accessToken = response['data']['token'];
+      final refreshToken = response['data']['refreshToken'];
 
-      /// SAVE TOKEN
-      await tokenStorage.saveToken(
-        token,
+    /// 2. حفظ التوكنين معاً باستخدام الدالة الجديدة
+      await tokenStorage.saveTokens(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
       );
 
        /// response model

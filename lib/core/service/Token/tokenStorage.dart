@@ -2,11 +2,8 @@
 // FlutterSecureStorage
 abstract class TokenStorage {
 
-  Future<void> saveToken(
-    String token,
-  );
-
-  Future<String?> getToken();
-
-  Future<void> clearToken();
+Future<void> saveTokens({required String accessToken, required String refreshToken});
+  Future<String?> getAccessToken();
+  Future<String?> getRefreshToken();
+  Future<void> clearTokens();
 }

@@ -1,145 +1,74 @@
 
 import 'package:citzenapp/core/bottomNav/custom_navbar.dart';
+import 'package:citzenapp/core/resource/color_manager.dart';
+import 'package:citzenapp/feature/homepage.dart';
+import 'package:citzenapp/feature/process/presentation/type_process.dart';
 import 'package:flutter/material.dart';
 
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
+import 'package:flutter/material.dart';
 
-class MainNavWrapper
-    extends StatelessWidget {
+
+import '../../feature/homepage.dart';
+
+class MainNavWrapper extends StatefulWidget {
 
   const MainNavWrapper({super.key});
 
   @override
-  Widget build(BuildContext context) {
-
-    return PersistentTabView(
-
-      tabs: [
-
-        /// HOME
-        PersistentTabConfig(
-          screen: const HomePage(),
-
-          item: navItem(
-            icon:
-                'assets/icons/Home.svg',
-
-            title: 'الرئيسية',
-          ),
-        ),
-
-        /// PROCESS
-        PersistentTabConfig(
-          screen: const ProcessPage(),
-
-          item: navItem(
-            icon:
-                'assets/icons/Category.svg',
-
-            title: 'المعاملات',
-          ),
-        ),
-
-        /// NOTIFICATION
-        PersistentTabConfig(
-          screen:
-              const NotificationPage(),
-
-          item: navItem(
-            icon:
-                'assets/icons/Notification.svg',
-
-            title: 'الإشعارات',
-          ),
-        ),
-
-        /// COMPLAINT
-        PersistentTabConfig(
-          screen:
-              const ComplaintPage(),
-
-          item: navItem(
-            icon:
-                'assets/icons/file.svg',
-
-            title: 'شكاوي',
-          ),
-        ),
-      ],
-
-      navBarBuilder:
-          (navBarConfig) =>
-              CustomBottomNav(
-        navBarConfig: navBarConfig,
-      ),
-    );
-  }
+  State<MainNavWrapper> createState() =>
+      _MainNavWrapperState();
 }
 
+class _MainNavWrapperState
+    extends State<MainNavWrapper> {
 
+  int currentIndex = 0;
 
+  final List<Widget> pages = [
 
-class HomePage extends StatelessWidget {
+    const HomePage(),
 
-  const HomePage({super.key});
+    const TransactionTypesPage(),
+
+    const NotificationPage(),
+
+    const ComplaintPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return CustomBottomNav(
 
-      body: Center(
-        child: Text(
-          'الرئيسية',
-        ),
-      ),
+      body: pages[currentIndex],
+
+      currentIndex: currentIndex,
+
+      onTap: (index) {
+
+        setState(() {
+
+          currentIndex = index;
+        });
+      },
     );
   }
 }
 
+// class ProcessPage extends StatelessWidget {
 
+//   const ProcessPage({super.key});
 
-class ProcessPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
 
-  const ProcessPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-
-      body: Center(
-        child: Text(
-          'المعاملات',
-        ),
-      ),
-    );
-  }
-}
-
-
-
-
-class ComplaintPage extends StatelessWidget {
-
-  const ComplaintPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-
-      body: Center(
-        child: Text(
-          'الشكاوي',
-        ),
-      ),
-    );
-  }
-}
-
-
+//     return  Container(
+//       color: Colors.red,
+//     );
+//   }
+// }
 
 class NotificationPage extends StatelessWidget {
 
@@ -148,13 +77,79 @@ class NotificationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return  Container(color: Colors.amber);
+  }
+}
 
+class ComplaintPage extends StatelessWidget {
+
+  const ComplaintPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+
+    return const Scaffold(
       body: Center(
-        child: Text(
-          'الإشعارات',
-        ),
+        child: Text('الشكاوي'),
       ),
     );
   }
 }
+// class ProcessPage extends StatelessWidget {
+
+//   const ProcessPage({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+
+//     return Scaffold(
+
+//       body: Center(
+//         child: Text(
+//           'المعاملات',
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+
+
+// class ComplaintPage extends StatelessWidget {
+
+//   const ComplaintPage({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+
+//     return Scaffold(
+
+//       body: Center(
+//         child: Text(
+//           'الشكاوي',
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+
+// class NotificationPage extends StatelessWidget {
+
+//   const NotificationPage({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+
+//     return Scaffold(
+
+//       body: Center(
+//         child: Text(
+//           'الإشعارات',
+//         ),
+//       ),
+//     );
+//   }
+// }

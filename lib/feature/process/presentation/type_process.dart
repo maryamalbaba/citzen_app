@@ -1,6 +1,8 @@
 // import 'package:citzenapp/core/resource/color_manager.dart';
 // import 'package:flutter/material.dart';
 import 'package:citzenapp/core/resource/color_manager.dart';
+import 'package:citzenapp/core/service/get_it/injection_container.dart';
+import 'package:citzenapp/feature/process/domain/usecase/usecase_typeprocess.dart';
 import 'package:citzenapp/feature/process/presentation/bloc/type_process_bloc.dart';
 import 'package:citzenapp/feature/process/presentation/bloc/type_process_event.dart';
 import 'package:citzenapp/feature/process/presentation/bloc/type_process_state.dart';
@@ -49,12 +51,11 @@ class TransactionTypesPage extends StatelessWidget {
       ),
 
       body: SafeArea(
-        child: BlocProvider(
-          create: (context) =>
-              context.read<TypeProcessBloc>()
-                ..add(
-                  GetTypeProcessEvent(),
-                ),
+        child:BlocProvider(
+    // ✨ Magic happens here: sl() automatically finds the UseCase! ✨
+    create: (context) => TypeProcessBloc(
+      sl<GetTypeProcessUseCase>(), 
+    )..add(GetTypeProcessEvent()),
 
           child: Column(
             children: [

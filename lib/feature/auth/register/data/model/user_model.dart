@@ -49,7 +49,7 @@ class UserModel extends UserEntity  {
       userName: map['userName'] as String,
       email: map['email'] as String,
       phone_number:
-          map['phoneNumber'] as String,
+          map['phone_number'] as String,
      
     );
   }
@@ -66,7 +66,7 @@ class UserModel extends UserEntity  {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, userName: $userName, email: $email, phoneNumber: $phone_number)';
+    return 'UserModel(id: $id, userName: $userName, email: $email, phone_number: $phone_number)';
   }
 
   @override

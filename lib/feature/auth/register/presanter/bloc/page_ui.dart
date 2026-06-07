@@ -88,23 +88,24 @@ class _RegisterPageState extends State<RegisterPage> {
               if (state is AuthSuccess) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text(
-                      'تم التسجيل بنجاح',
-                    ),
+                    content: Text('تم التسجيل بنجاح'),
                   ),
                 );
 
                 Future.delayed(
                   const Duration(seconds: 2),
                   () {
-                    Navigator.push(
+                      Navigator.pushReplacementNamed(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => OtpPage(
-                          sessionId: state.user.sessionId,
-                          phone_num: phoneController.text
-                        ),
-                      ),
+                      '/otp',
+                      arguments: {
+                        'sessionId': state.user
+                            .sessionId, 
+                        
+                        'phone_num': phoneController
+                            .text, 
+                       
+                      },
                     );
                   },
                 );

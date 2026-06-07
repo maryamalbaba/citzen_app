@@ -1,3 +1,4 @@
+import 'package:citzenapp/core/bottomNav/MainNavWrapper.dart';
 import 'package:citzenapp/core/resource/color_manager.dart';
 import 'package:citzenapp/core/service/Token/secureTokenstorage.dart';
 import 'package:citzenapp/core/service/dioClient.dart';
@@ -75,7 +76,7 @@ class _OtpPageState extends State<OtpPage> {
  Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) =>TransactionTypesPage()
+                        builder: (_) =>MainNavWrapper()
                       ),
                     );
                   /// navigate home
