@@ -1,5 +1,6 @@
 import 'package:citzenapp/core/config/EnvClass.dart';
 import 'package:citzenapp/core/navigation/NavigationService.dart';
+import 'package:citzenapp/core/resource/api.dart';
 import 'package:citzenapp/core/service/Token/tokenStorage.dart';
 import 'package:citzenapp/core/service/apiConsumer.dart';
 import 'package:dio/dio.dart';
@@ -43,7 +44,7 @@ class AuthInterceptor extends Interceptor {
         try {
           // محاولة تجديد التوكن
           final response = await _refreshDio.post(
-            '/api/auth/refresh',
+           url.reFreshToken,
             data: {"refreshToken": refreshToken},
           );
 

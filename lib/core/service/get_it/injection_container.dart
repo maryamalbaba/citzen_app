@@ -7,6 +7,16 @@ import 'package:citzenapp/feature/auth/login/data/data_source/LoginRemoteDataSou
 import 'package:citzenapp/feature/auth/login/domain/repo/LoginRepository.dart';
 import 'package:citzenapp/feature/auth/login/domain/usecase/usecase.dart';
 import 'package:citzenapp/feature/auth/login/presentation/bloc/login_bloc.dart';
+import 'package:citzenapp/feature/auth/otp/data/repo/repoImp.dart';
+import 'package:citzenapp/feature/auth/otp/data/source/remotImpl.dart';
+import 'package:citzenapp/feature/auth/otp/data/source/remotedata.dart';
+import 'package:citzenapp/feature/auth/otp/domain/repo/repootp.dart';
+import 'package:citzenapp/feature/auth/otp/domain/usecase/otpUsecase.dart';
+import 'package:citzenapp/feature/auth/otp/presentation/bloc/otp_bloc.dart';
+import 'package:citzenapp/feature/auth/resendotp/data/repo/reporesend.dart';
+import 'package:citzenapp/feature/auth/resendotp/data/source/remote.dart';
+import 'package:citzenapp/feature/auth/resendotp/domain/usecase/resendusecase.dart';
+import 'package:citzenapp/feature/auth/resendotp/presentation/bloc/resend_otp_bloc.dart';
 import 'package:citzenapp/feature/process/data/repo/repoimp.dart';
 import 'package:citzenapp/feature/process/data/source/remote_source.dart';
 import 'package:citzenapp/feature/process/domain/repo/repo_type.dart';
@@ -15,11 +25,6 @@ import 'package:citzenapp/feature/process/presentation/bloc/type_process_bloc.da
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 
-// Import all your files here...
-// import 'type_process_bloc.dart';
-// import 'get_type_process_usecase.dart';
-// import 'type_process_impl.dart';
-// import 'get_type_proc_source_impl.dart';
 
 final sl = GetIt.instance; // sl stands for Service Locator
 
@@ -43,7 +48,7 @@ Future<void> init() async {
     () => TypeProcessImpl(remote: sl()),
   );
 
-  /// ==========================================
+
   /// 4. DATA SOURCES (Data Layer)
   /// ==========================================
   // Note: I'm injecting GetTypeProcSourceImpl exactly as your code expects
@@ -51,49 +56,82 @@ Future<void> init() async {
     () => GetTypeProcSourceImpl(sl()),
   );
 
-  /// ==========================================
+ 
   /// 5. CORE / EXTERNAL (API Consumer)
   /// ==========================================
   // Make sure your ApiConsumer is also registered here!
-  // sl.registerLazySingleton<ApiConsumer>(() => ApiConsumerImpl()); 
-
-
-
-
+  // sl.registerLazySingleton<ApiConsumer>(() => ApiConsumerImpl());
 // 1. Register TokenStorage
-
   sl.registerLazySingleton<TokenStorage>(
-    () => SecureTokenStorage( const FlutterSecureStorage()), 
+    () => SecureTokenStorage(const FlutterSecureStorage()),
   );
 
-  // 2. Register DioClient (It will automatically grab TokenStorage from sl)
+  // 2. Register DioClient
   sl.registerLazySingleton<DioClient>(
     () => DioClient(sl()),
   );
 
-  // 3. Register ApiConsumer (Using your DioConsumer implementation)
-  // It will automatically grab the DioClient from sl!
-  sl.registerLazySingleton<ApiConsumer>(
+  // 🔥 التعديل الجوهري هنا: نسجل الـ DioConsumer بنوعه الصريح أولاً
+  sl.registerLazySingleton<DioConsumer>(
     () => DioConsumer(sl()),
   );
 
-
+  // ثم نربط الـ ApiConsumer بنفس النسخة لكي لا تنهار الكلاسات القديمة مثل الـ OTP العادي
+  sl.registerLazySingleton<ApiConsumer>(
+    () => sl<DioConsumer>(),
+  );
 
 //!
 // اضفي هذه الأسطر داخل دالة init() في ملف الـ injection_container.dart
 
 // Bloc
-sl.registerFactory(() => LoginBloc(sl()));
+  sl.registerFactory(() => LoginBloc(sl()));
 
 // Use cases
-sl.registerLazySingleton(() => LoginUseCase(sl()));
+  sl.registerLazySingleton(() => LoginUseCase(sl()));
 
 // Repositories
-sl.registerLazySingleton<LoginRepository>(() => LoginRepositoryImpl(sl()));
+  sl.registerLazySingleton<LoginRepository>(() => LoginRepositoryImpl(sl()));
 
 // Data sources
-sl.registerLazySingleton<LoginRemoteDataSource>(() => LoginRemoteDataSourceImpl(sl()));
+  sl.registerLazySingleton<LoginRemoteDataSource>(
+      () => LoginRemoteDataSourceImpl(sl()));
+
+// inside injection_container.dart -> init() function
+
+// ============================================================================
+//  1. تسجيل اعتمادات الـ OTP الأساسي (التحقق)
+// ============================================================================
+
+// Blocs (نستخدم registerFactory لأن الـ Bloc يتم تدميره وإنشاؤه مع كل شاشة)
+  sl.registerFactory(() => OtpBloc(sl()));
+
+// Use cases
+  sl.registerLazySingleton(() => OTpUseCase(sl()));
+
+// 🚀 التعديل الأول: تحديد النوع الصريح لـ remotOtpImpl المتوقع داخل الـ Repository
+sl.registerLazySingleton<remotOtpImpl>(() => remotOtpImpl(api: sl()));
+
+// 🚀 التعديل الثاني: تمرير الـ sl() بشكل صحيح ليتوافق مع الـ DataSource الذي سجلناه بالأعلى
+sl.registerLazySingleton<OtpRepo>(() => OtpStepRepositoryImpl(sl<remotOtpImpl>(), sl()));
+// ============================================================================
+//  2. تسجيل اعتمادات الـ Resend OTP الجديدة
 
 
-}
+// Blocs
+sl.registerFactory(() => ResendOtpBloc(sl()));
 
+// Use cases
+sl.registerLazySingleton(() => ResendOtpUseCase(
+      sl<ResendOtpRepository>(), 
+      repository: sl<ResendOtpRepository>(),
+    ));
+
+// Repositories
+sl.registerLazySingleton<ResendOtpRepository>(
+    () => ResendOtpRepositoryImpl(remoteDataSource: sl<ResendOtpRemoteDataSourceImpl>()));
+
+// Data sources
+sl.registerLazySingleton<ResendOtpRemoteDataSourceImpl>(
+    () => ResendOtpRemoteDataSourceImpl(api: sl<DioConsumer>()));
+    }

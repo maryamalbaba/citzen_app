@@ -1,4 +1,4 @@
-import 'package:citzenapp/core/resource/baseurl.dart';
+import 'package:citzenapp/core/resource/api.dart';
 import 'package:citzenapp/core/service/apiConsumer.dart';
 import 'package:citzenapp/core/service/reqestType.dart';
 

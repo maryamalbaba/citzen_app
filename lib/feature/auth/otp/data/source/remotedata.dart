@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 
-import 'package:citzenapp/core/resource/baseurl.dart';
+import 'package:citzenapp/core/resource/api.dart';
 import 'package:citzenapp/core/service/apiConsumer.dart';
 import 'package:citzenapp/core/service/reqestType.dart';
 import 'package:citzenapp/feature/auth/otp/data/model/modelOtp.dart';
