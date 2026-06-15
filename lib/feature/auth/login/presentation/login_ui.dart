@@ -1,4 +1,5 @@
 // login_page.dart
+import 'package:citzenapp/core/resource/color_manager.dart';
 import 'package:citzenapp/feature/auth/login/presentation/bloc/login_bloc.dart';
 import 'package:citzenapp/feature/auth/login/presentation/bloc/login_event.dart';
 import 'package:citzenapp/feature/auth/login/presentation/bloc/login_state.dart';
@@ -17,7 +18,8 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _userController = TextEditingController();
   final _passwordController = TextEditingController();
-
+// المتغير المسؤول عن حالة إخفاء أو إظهار كلمة المرور
+  bool _isObscured = true;
   @override
   void dispose() {
     _userController.dispose();
@@ -28,7 +30,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('تسجيل الدخول')),
       // نقوم بحقن الـ Bloc هنا باستخدام GetIt (sl)
       body: BlocProvider(
         create: (context) => sl<LoginBloc>(),
@@ -63,45 +64,137 @@ class _LoginPageState extends State<LoginPage> {
           },
           builder: (context, state) {
             return Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(16.0),
               child: Form(
                 key: _formKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Text(
+                      "تسجيل الدخول",
+                      style: TextStyle(color: ColorManager.darkGreen, fontSize: 20),
+                    ),
+                    SizedBox(height: 24),
                     TextFormField(
+                      style: TextStyle(
+                          color: ColorManager.lightBrown, fontSize: 15),
+
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                       controller: _userController,
-                      decoration:
-                          const InputDecoration(labelText: 'اسم المستخدم'),
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                                Icons.person_outline,
+                                color: ColorManager.lightBrown.withOpacity(0.7),
+                                size: 22,
+                              ),
+                        labelText: 'اسم المستخدم',
+                        labelStyle: TextStyle(
+                            color: ColorManager.brown.withOpacity(0.6)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                              color: ColorManager.lightBrown, width: 1.2),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                              color: ColorManager.lightBrown, width: 1.8),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                              color: ColorManager.lightBrown.withOpacity(0.6),
+                              width: 1.2),
+                        ),
+                      ),
                       validator: (v) =>
                           v!.isEmpty ? 'الرجاء إدخال اسم المستخدم' : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       controller: _passwordController,
-                      obscureText: true,
-                      decoration:
-                          const InputDecoration(labelText: 'كلمة المرور'),
+                     obscureText: _isObscured, // ربط الحقل بالمتغير لتغيير الحالة ديناميكياً
+                      style: TextStyle(
+                          color: ColorManager.lightBrown, fontSize: 15),
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                                Icons.lock,
+                                color: ColorManager.lightBrown.withOpacity(0.7),
+                                size: 22,
+                              ),
+
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _isObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                                  color: ColorManager.lightBrown.withOpacity(0.7),
+                                  size: 22,
+                                ),
+                                onPressed: () {
+                                  // عكس قيمة المتغير لتحديث الحقل بين الإخفاء والإظهار
+                                  setState(() {
+                                    _isObscured = !_isObscured;
+                                  });
+                                },
+                              ),
+                              
+                        labelText: 'كلمة المرور',
+                        labelStyle: TextStyle(
+                            color: ColorManager.brown.withOpacity(0.6)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                              color: ColorManager.lightBrown, width: 1.2),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                              color: ColorManager.lightBrown, width: 1.8),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                              color: ColorManager.lightBrown.withOpacity(0.6),
+                              width: 1.2),
+                        ),
+                      ),
                       validator: (v) =>
                           v!.isEmpty ? 'الرجاء إدخال كلمة المرور' : null,
                     ),
                     const SizedBox(height: 32),
-                    state is LoginLoading
-                        ? const CircularProgressIndicator()
-                        : ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                // إرسال حدث تسجيل الدخول للـ Bloc
-                                BlocProvider.of<LoginBloc>(context).add(
-                                  SubmitLoginEvent(
-                                    userName: _userController.text.trim(),
-                                    password: _passwordController.text.trim(),
+                    Center(
+                      child: state is LoginLoading
+                          ? const CircularProgressIndicator()
+                          : Center(
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: ColorManager.darkGreen,
+                                  foregroundColor: Colors.white,
+                                  elevation: 4,
+                                  shadowColor: Colors.black.withOpacity(0.4),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25),
                                   ),
-                                );
-                              }
-                            },
-                            child: const Text('دخول'),
+                                ),
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    // إرسال حدث تسجيل الدخول للـ Bloc
+                                    BlocProvider.of<LoginBloc>(context).add(
+                                      SubmitLoginEvent(
+                                        userName: _userController.text.trim(),
+                                        password: _passwordController.text.trim(),
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: const Text(
+                                  'دخول',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
                           ),
+                    ),
                   ],
                 ),
               ),

@@ -2,7 +2,7 @@
 import 'package:citzenapp/core/bottomNav/custom_navbar.dart';
 import 'package:citzenapp/core/resource/color_manager.dart';
 import 'package:citzenapp/feature/homepage.dart';
-import 'package:citzenapp/feature/process/presentation/type_process.dart';
+import 'package:citzenapp/feature/process_type/presentation/type_process.dart';
 import 'package:flutter/material.dart';
 
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';

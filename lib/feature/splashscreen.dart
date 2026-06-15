@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final accessToken = await tokenStorage.getAccessToken();
 
     if (!mounted) return;
-    // Navigator.pushReplacementNamed(context, '/register');
+    // Navigator.pushReplacementNamed(context, '/login');
 //!Vip this is correct which is comment
     if (accessToken != null) {
       // إذا يوجد توكن، نتوجه مباشرة للرئيسية ونحذف الـ Splash من
@@ -42,8 +42,11 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        // يمكنكِ استبدال هذا باللوجو الخاص بتطبيقكِ
-        child: FlutterLogo(size: 100),
+        child: Image(
+          image: AssetImage('assets/images/logo.png'),
+          width: 150,
+          height: 150,
+        ),
       ),
     );
   }

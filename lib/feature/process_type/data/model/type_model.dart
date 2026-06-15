@@ -1,4 +1,4 @@
-import 'package:citzenapp/feature/process/domain/entity/entity.dart';
+import 'package:citzenapp/feature/process_type/domain/entity/entity.dart';
 
 class TypeProcModel extends TypeProcessEntity {
    TypeProcModel({

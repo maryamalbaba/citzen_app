@@ -4,7 +4,7 @@ import 'package:citzenapp/core/navigation/NavigationService.dart';
 import 'package:citzenapp/feature/auth/login/presentation/login_ui.dart';
 import 'package:citzenapp/feature/auth/otp/presentation/bloc/OtpUi.dart';
 import 'package:citzenapp/feature/auth/register/presanter/bloc/page_ui.dart';
-import 'package:citzenapp/feature/process/presentation/type_process.dart';
+import 'package:citzenapp/feature/process_type/presentation/type_process.dart';
 import 'package:citzenapp/feature/splashscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

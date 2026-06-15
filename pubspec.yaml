@@ -50,6 +50,7 @@ dependencies:
   flutter_localization: ^0.3.3
   easy_stepper: ^0.8.5+1
   animated_bottom_navigation_bar: ^1.4.0
+  equatable: ^2.0.8
   
 
 dev_dependencies:

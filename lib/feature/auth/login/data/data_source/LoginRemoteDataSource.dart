@@ -14,8 +14,7 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
 
   @override
   Future<Map<String, dynamic>> login({required String userName, required String password}) async {
-    // إرسال الطلب بحسب مسار الـ API الخاص بالـ Login لديكِ (مثلاً: /api/auth/login)
-    final response = await apiConsumer.request(
+       final response = await apiConsumer.request(
       path:url.login , 
       method: RequestType.post,
       data: {

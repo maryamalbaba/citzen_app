@@ -11,17 +11,29 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:citzenapp/core/config/EnvClass.dart';
 import 'package:citzenapp/core/service/Token/tokenStorage.dart';
 import 'package:dio/dio.dart';
-
 class AuthInterceptor extends Interceptor {
   final TokenStorage tokenStorage;
-  // ننشئ نسخة ديو منفصلة فقط لطلبات التحديث لتجنب الدخول في حلقة لا نهائية (Infinite Loop)
-  final Dio _refreshDio = Dio(BaseOptions(baseUrl: Env.baseUrl));
+  late final Dio _refreshDio;
 
-  AuthInterceptor(this.tokenStorage);
+  AuthInterceptor(this.tokenStorage) {
+    // نجهز نسخة الـ refresh مع نفس إعدادات الوقت والـ validateStatus لضمان الحماية
+    _refreshDio = Dio(
+      BaseOptions(
+        baseUrl: Env.baseUrl,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        validateStatus: (status) {
+          // نجعلها تقبل الـ 401 هنا لنستطيع قراءته ومعالجته يدوياً دون الانهيار
+          return status != null && status < 500;
+        },
+      ),
+    );
+    // نربط معها الـ Logger لكي تري بوضوح في الـ Console عملية تجديد التوكن
+    _refreshDio.interceptors.add(LoggerInterceptor.interceptor());
+  }
 
   @override
-  void onRequest(
-      RequestOptions options, RequestInterceptorHandler handler) async {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     final token = await tokenStorage.getAccessToken();
 
     if (token != null) {
@@ -33,69 +45,67 @@ class AuthInterceptor extends Interceptor {
 
     return handler.next(options);
   }
-
-  @override
+@override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    // الباكيند يرجع 404 عند انتهاء صلاحية الـ Access Token
-    if (err.response?.statusCode == 404) {
+    // 1. استخراج مسار الطلب الحالي الذي فشل
+    final String? currentPath = err.requestOptions.path;
+
+    // 2. إذا كان الخطأ 401 ولكن الطلب القادم هو من الـ Login API، مرري الخطأ فوراً للـ ErrorHandler
+    if (currentPath?.contains(url.login) ?? false) {
+      return handler.next(err); 
+    }
+
+    // 3. باقي الـ APIs الأخرى في المشروع تعامل بشكل طبيعي مع الـ Refresh Token
+    if (err.response?.statusCode == 401) {
       final refreshToken = await tokenStorage.getRefreshToken();
 
       if (refreshToken != null) {
         try {
-          // محاولة تجديد التوكن
           final response = await _refreshDio.post(
-           url.reFreshToken,
+            url.reFreshToken,
             data: {"refreshToken": refreshToken},
           );
 
-          if (response.statusCode == 200 || response.statusCode == 201) {
-            // فرضنا أن الباكيند يعود بـ accessToken و refreshToken في الـ data
-            final newAccessToken = response.data['accessToken'];
-            final newRefreshToken = response.data['refreshToken'] ??
-                refreshToken; // إذا لم يتغير الـ refresh استعمل القديم
+          if (response.statusCode == 401) {
+            await tokenStorage.clearTokens();
+            _navigateToLogin();
+            return handler.next(err);
+          }
 
-            // حفظ التوكنات الجديدة
+          if (response.statusCode == 200 || response.statusCode == 201) {
+            final newAccessToken = response.data['accessToken'];
+            final newRefreshToken = response.data['refreshToken'] ?? refreshToken;
+
             await tokenStorage.saveTokens(
               accessToken: newAccessToken,
               refreshToken: newRefreshToken,
             );
 
-            // تعديل الطلب الأصلي الفاشل بالتوكن الجديد
             final options = err.requestOptions;
             options.headers['Authorization'] = 'Bearer $newAccessToken';
 
-            // إعادة إرسال الطلب الأصلي بنجاح
-            final cloneReq =
-                await Dio(BaseOptions(baseUrl: Env.baseUrl)).fetch(options);
+            final cloneReq = await _refreshDio.fetch(options);
             return handler.resolve(cloneReq);
           }
         } catch (e) {
-          // إذا فشل طلب الـ refresh (أي أن الـ Refresh Token نفسه مات)
           await tokenStorage.clearTokens();
-
-          // توجيه المستخدم لصفحة الـ Login
-          // (يفضل استخدام إما Navigator مع GlobalKey أو الـ State Management الخاص بكِ لعمل الخروج)
           _navigateToLogin();
-
           return handler.next(err);
         }
       }
     }
 
-    // إذا كان الخطأ ليس 404 أو لم يكن هناك ريفريش توكن، مرر الخطأ بشكل طبيعي للـ DioConsumer
+    // إذا كان الخطأ ليس 401 لأي API آخر، مرريه للـ ErrorHandler
     return handler.next(err);
   }
 
   void _navigateToLogin() {
-    
     NavigationService.navigatorKey.currentState?.pushNamedAndRemoveUntil(
       '/login',
-      (Route<dynamic> route) =>
-          false, // يحذف كل الصفحات السابقة من الذاكرة لكي لا يستطيع العودة بالـ Back
+      (Route<dynamic> route) => false,
     );
   }
 }
-
 //! dio client يتم استدعاءها ب
 
 class LoggerInterceptor {

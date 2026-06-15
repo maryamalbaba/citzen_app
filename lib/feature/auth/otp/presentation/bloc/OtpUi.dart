@@ -218,12 +218,13 @@ class _OtpPageState extends State<OtpPage> {
                                 color: _isResendButtonEnable
                                     ? ColorManager.darkGreen
                                     : Colors.grey,
-                                decoration: TextDecoration.underline,
+                              
                               ),
                             ),
                           );
                         },
                       ),
+                      SizedBox(height: 10,),
 
                       SizedBox(
                         width: 110,

@@ -1,4 +1,5 @@
 // login_repository_impl.dart
+import 'package:citzenapp/core/error/exception.dart';
 import 'package:citzenapp/core/error/faliure.dart';
 import 'package:citzenapp/feature/auth/login/data/data_source/LoginRemoteDataSource.dart';
 import 'package:citzenapp/feature/auth/login/data/models/LoginResponseModel.dart';
@@ -21,11 +22,21 @@ class LoginRepositoryImpl implements LoginRepository {
       if (response['success'] == true) {
         final data = LoginResponseModel.fromMap(response['data']);
         return Right(data);
-      } else {
+      }else {
         return Left(ServerFailure(response['message'] ?? 'حدث خطأ ما'));
       }
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } 
+    // 🔥 1. اصطياد خطأ الـ 401 المخصص واستخراج الرسالة العربية منه
+    on UnauthorizedException catch (e) {
+      return Left(UnauthorizedFailure(e.message)); // e.message تحتوي على: "اسم المستخدم أو كلمة المرور غير صحيحة"
+    } 
+    // 🔥 2. اصطياد أخطاء السيرفر الأخرى (مثل 404، 500)
+    on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } 
+    // 🔥 3. اصطياد أي خطأ برمجي آخر غير متوقع
+    catch (e) {
+      return Left(ServerFailure('حدث خطأ غير متوقع، الرجاء المحاولة لاحقاً'));
     }
   }
 }

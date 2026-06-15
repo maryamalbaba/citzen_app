@@ -1,10 +1,10 @@
 import 'package:citzenapp/core/error/exception.dart';
 import 'package:citzenapp/core/error/faliure.dart';
 
-import 'package:citzenapp/feature/process/data/model/type_model.dart';
-import 'package:citzenapp/feature/process/data/source/remote_source.dart';
-import 'package:citzenapp/feature/process/domain/entity/entity.dart';
-import 'package:citzenapp/feature/process/domain/repo/repo_type.dart';
+import 'package:citzenapp/feature/process_type/data/model/type_model.dart';
+import 'package:citzenapp/feature/process_type/data/source/remote_source.dart';
+import 'package:citzenapp/feature/process_type/domain/entity/entity.dart';
+import 'package:citzenapp/feature/process_type/domain/repo/repo_type.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dartz/dartz.dart';
 

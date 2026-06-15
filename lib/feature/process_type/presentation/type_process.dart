@@ -2,10 +2,11 @@
 // import 'package:flutter/material.dart';
 import 'package:citzenapp/core/resource/color_manager.dart';
 import 'package:citzenapp/core/service/get_it/injection_container.dart';
-import 'package:citzenapp/feature/process/domain/usecase/usecase_typeprocess.dart';
-import 'package:citzenapp/feature/process/presentation/bloc/type_process_bloc.dart';
-import 'package:citzenapp/feature/process/presentation/bloc/type_process_event.dart';
-import 'package:citzenapp/feature/process/presentation/bloc/type_process_state.dart';
+import 'package:citzenapp/feature/process_type/domain/usecase/usecase_typeprocess.dart';
+import 'package:citzenapp/feature/process_type/presentation/bloc/type_process_bloc.dart';
+import 'package:citzenapp/feature/process_type/presentation/bloc/type_process_event.dart';
+import 'package:citzenapp/feature/process_type/presentation/bloc/type_process_state.dart';
+import 'package:citzenapp/feature/processes/presentation/ui.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,36 +20,36 @@ class TransactionTypesPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xffF5F5F5),
 
-      appBar: AppBar(
-        backgroundColor: const Color(0xff004D40),
-        elevation: 0,
-        centerTitle: true,
+      // appBar: AppBar(
+      //   backgroundColor: const Color(0xff004D40),
+      //   elevation: 0,
+      //   centerTitle: true,
 
-        title: Text(
-          'تقديم معاملة',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
+      //   title: Text(
+      //     'تقديم معاملة',
+      //     style: TextStyle(
+      //       fontSize: 14,
+      //       fontWeight: FontWeight.bold,
+      //       color: Colors.white,
+      //     ),
+      //   ),
 
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(left: 10.w),
+      //   actions: [
+      //     Padding(
+      //       padding: EdgeInsets.only(left: 10.w),
 
-            child: IconButton(
-              onPressed: () {},
+      //       child: IconButton(
+      //         onPressed: () {},
 
-              icon: Icon(
-                Icons.arrow_forward,
-                size: 24,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
+      //         icon: Icon(
+      //           Icons.arrow_forward,
+      //           size: 24,
+      //           color: Colors.white,
+      //         ),
+      //       ),
+      //     ),
+      //   ],
+      // ),
 
       body: SafeArea(
         child:BlocProvider(
@@ -140,7 +141,15 @@ class TransactionTypesPage extends StatelessWidget {
                                 'assets/images/logo.png',
 
                             onTap: () {
-                              print(item.id);
+                              Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => AuthProcessesPage(
+      processTypeId: item.id, // الـ ID القادم من صفحة الأنواع
+      title: 'معاملات الـ AUTH', // أو اسم النوع المختار ديناميكياً
+    ),
+  ),
+);
                             },
                           );
                         },

@@ -1,4 +1,4 @@
-import 'package:citzenapp/feature/process/domain/usecase/usecase_typeprocess.dart';
+import 'package:citzenapp/feature/process_type/domain/usecase/usecase_typeprocess.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/error/faliure.dart';
