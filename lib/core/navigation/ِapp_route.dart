@@ -1,3 +1,4 @@
+import 'package:citzenapp/feature/prossesFeature/process_type/presentation/type_process.dart';
 import 'package:flutter/material.dart';
 import 'package:citzenapp/core/bottomNav/MainNavWrapper.dart';
 import 'package:citzenapp/feature/auth/login/presentation/login_ui.dart';
@@ -10,6 +11,8 @@ class AppRoutes {
   static const String login = '/login';
   static const String home = '/home';
   static const String otp = '/otp';
+  static const String transactionTypes= '/transactionTypes';
+
 
   // دالة الـ Routes العادية والـ Static الشاشات التي لا تحتاج معطيات
   static Map<String, WidgetBuilder> getRoutes() {
@@ -17,6 +20,7 @@ class AppRoutes {
       register: (context) => const RegisterPage(),
       login: (context) => const LoginPage(),
       home: (context) => const MainNavWrapper(),
+      transactionTypes: (context) => const TransactionTypesPage(),
     };
   }
 

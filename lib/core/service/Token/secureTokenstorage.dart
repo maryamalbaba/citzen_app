@@ -10,8 +10,8 @@ class SecureTokenStorage implements TokenStorage {
 
   SecureTokenStorage(this.storage);
 
-  static const _accessTokenKey = 'access_token';
-  static const _refreshTokenKey = 'refresh_token';
+  static const _accessTokenKey = 'token';
+  static const _refreshTokenKey = 'refreshToken';
 
   @override
   Future<void> saveTokens({required String accessToken, required String refreshToken}) async {

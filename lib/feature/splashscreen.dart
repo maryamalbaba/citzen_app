@@ -27,7 +27,8 @@ class _SplashScreenState extends State<SplashScreen> {
     final accessToken = await tokenStorage.getAccessToken();
 
     if (!mounted) return;
-    // Navigator.pushReplacementNamed(context, '/login');
+    // Navigator.pushReplacementNamed(
+    //     context, '/register'); // الانتقال لصفحة التسجيل/الدخول بشكل افتراضي
 //!Vip this is correct which is comment
     if (accessToken != null) {
       // إذا يوجد توكن، نتوجه مباشرة للرئيسية ونحذف الـ Splash من

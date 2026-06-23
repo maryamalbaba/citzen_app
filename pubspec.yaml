@@ -51,6 +51,7 @@ dependencies:
   easy_stepper: ^0.8.5+1
   animated_bottom_navigation_bar: ^1.4.0
   equatable: ^2.0.8
+  file_picker: ^8.0.0
   
 
 dev_dependencies:

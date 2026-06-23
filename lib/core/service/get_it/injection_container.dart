@@ -17,16 +17,22 @@ import 'package:citzenapp/feature/auth/resendotp/data/repo/reporesend.dart';
 import 'package:citzenapp/feature/auth/resendotp/data/source/remote.dart';
 import 'package:citzenapp/feature/auth/resendotp/domain/usecase/resendusecase.dart';
 import 'package:citzenapp/feature/auth/resendotp/presentation/bloc/resend_otp_bloc.dart';
-import 'package:citzenapp/feature/process_type/data/repo/repoimp.dart';
-import 'package:citzenapp/feature/process_type/data/source/remote_source.dart';
-import 'package:citzenapp/feature/process_type/domain/repo/repo_type.dart';
-import 'package:citzenapp/feature/process_type/domain/usecase/usecase_typeprocess.dart';
-import 'package:citzenapp/feature/process_type/presentation/bloc/type_process_bloc.dart';
-import 'package:citzenapp/feature/processes/data/repo/auth_process_repository_impl.dart';
-import 'package:citzenapp/feature/processes/data/source/auth_process_remote_data_source.dart';
-import 'package:citzenapp/feature/processes/domain/repo/auth_process_repository.dart';
-import 'package:citzenapp/feature/processes/domain/usecase/get_auth_processes_use_case.dart';
-import 'package:citzenapp/feature/processes/presentation/bloc/process_bloc.dart';
+import 'package:citzenapp/feature/prossesFeature/process_type/data/repo/repoimp.dart';
+import 'package:citzenapp/feature/prossesFeature/process_type/data/source/remote_source.dart';
+import 'package:citzenapp/feature/prossesFeature/process_type/domain/repo/repo_type.dart';
+import 'package:citzenapp/feature/prossesFeature/process_type/domain/usecase/usecase_typeprocess.dart';
+import 'package:citzenapp/feature/prossesFeature/process_type/presentation/bloc/type_process_bloc.dart';
+import 'package:citzenapp/feature/prossesFeature/processes/data/repo/auth_process_repository_impl.dart';
+import 'package:citzenapp/feature/prossesFeature/processes/data/source/auth_process_remote_data_source.dart';
+import 'package:citzenapp/feature/prossesFeature/processes/domain/repo/auth_process_repository.dart';
+import 'package:citzenapp/feature/prossesFeature/processes/domain/usecase/get_auth_processes_use_case.dart';
+import 'package:citzenapp/feature/prossesFeature/processes/presentation/bloc/process_bloc.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/data/datasources/stage_config_remote_datasource.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/data/datasources/stage_config_remote_datasource_impl.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/data/repo/stage_config_repository_impl.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/domain/repositories/stage_config_repository.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/domain/usecase/get_stage_config_usecase.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/presentation/bloc/stage_config_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 
@@ -152,4 +158,28 @@ Future<void> init() async {
 
   // Blocs
 sl.registerFactory(() => AuthProcessBloc(sl()));
+
+// ===================================================
+// Stage Config Feature
+// ===================================================
+
+// Bloc
+sl.registerFactory(() => StageConfigBloc(sl()));
+
+// UseCase
+sl.registerLazySingleton(() => GetStageConfigUseCase(sl()));
+
+// Repository
+sl.registerLazySingleton<StageConfigRepository>(
+  () => StageConfigRepositoryImpl(remoteDataSource: sl()),
+);
+
+// DataSource
+sl.registerLazySingleton<StageConfigRemoteDataSource>(
+  () => StageConfigRemoteDataSourceImpl(sl<DioConsumer>()),
+);
+
+
 }
+
+

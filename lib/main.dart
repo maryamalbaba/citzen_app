@@ -1,10 +1,11 @@
 import 'package:citzenapp/core/bottomNav/MainNavWrapper.dart';
+import 'package:citzenapp/core/game/ConnectivityGate.dart';
 import 'package:citzenapp/core/navigation/%D9%90app_route.dart';
 import 'package:citzenapp/core/navigation/NavigationService.dart';
 import 'package:citzenapp/feature/auth/login/presentation/login_ui.dart';
 import 'package:citzenapp/feature/auth/otp/presentation/bloc/OtpUi.dart';
 import 'package:citzenapp/feature/auth/register/presanter/bloc/page_ui.dart';
-import 'package:citzenapp/feature/process_type/presentation/type_process.dart';
+import 'package:citzenapp/feature/prossesFeature/process_type/presentation/type_process.dart';
 import 'package:citzenapp/feature/splashscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -49,6 +50,10 @@ class MyApp extends StatelessWidget {
           routes:AppRoutes.getRoutes(),
      
           onGenerateRoute: AppRoutes.onGenerateRoute,
+          // 🌟 هنا نقوم بتغليف التطبيق بالكامل ببوابة فحص الإنترنت 🌟
+          builder: (context, widget) {
+            return ConnectivityGate(child: widget!);
+          },
         );
       },
     );

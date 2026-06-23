@@ -1,12 +1,15 @@
+
+import 'package:citzenapp/core/navigation/%D9%90app_route.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:citzenapp/core/navigation/%D9%90app_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomBottomNav extends StatelessWidget {
   final Widget body;
-
   final int currentIndex;
-
   final Function(int) onTap;
 
   CustomBottomNav({
@@ -40,17 +43,13 @@ class CustomBottomNav extends StatelessWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            /// اللوغو
             Image.asset(
               'assets/images/logo.png',
               width: 60,
               height: 35,
               fit: BoxFit.contain,
             ),
-
             const SizedBox(width: 8),
-
-            /// النصوص
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -79,69 +78,111 @@ class CustomBottomNav extends StatelessWidget {
         ),
       ),
       backgroundColor: Colors.white,
-      extendBody: false,
+      extendBody: true,
       body: body,
-      floatingActionButton: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: const Color(0xff082922),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 10,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
-        child: IconButton(
-          onPressed: () {},
-          icon: const Icon(
-            Icons.add,
-            color: Colors.white,
-            size: 30,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xff082922),
+        shape: const CircleBorder(),
+        onPressed: () {
+          Navigator.pushNamed(
+            context,
+            AppRoutes.transactionTypes,
+          );
+        },
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+      // ══════════════ STATIC NOTCHED NAVBAR (no Scaffold.geometryOf) ══════════════
+      // PhysicalShape with a clipper we compute ourselves, instead of
+      // BottomAppBar(shape: ...), which relies on Scaffold.geometryOf()
+      // and is hit by a long-standing Flutter framework bug (flutter/flutter#108363,
+      // #126513, #134408, #140733) that throws
+      // "Scaffold.geometryOf() must only be accessed during the paint phase."
+      bottomNavigationBar: SizedBox(
+        height: 70,
+        child: PhysicalShape(
+          clipper: const _StaticNotchClipper(
+            fabDiameter: 56.0, // default (non-mini) FAB diameter
+            notchMargin: 8.0,
+          ),
+          color: Colors.white,
+          elevation: 8,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildTab(0),
+              _buildTab(1),
+              const SizedBox(width: 48), // gap for the FAB
+              _buildTab(2),
+              _buildTab(3),
+            ],
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: 
-         AnimatedBottomNavigationBar.builder(
-          itemCount: icons.length,
-          activeIndex: currentIndex,
-          gapLocation: GapLocation.center,
-          // notchSmoothness: NotchSmoothness.softEdge,
-          // leftCornerRadius: 20,
-          // rightCornerRadius: 20,
-          height: 70,
-          backgroundColor: Colors.white,
-          tabBuilder: (index, isActive) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  icons[index],
-                  width: 22,
-                  height: 22,
-                  colorFilter: ColorFilter.mode(
-                    isActive ? const Color(0xff082922) : Colors.grey,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  titles[index],
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: isActive ? const Color(0xff082922) : Colors.grey,
-                  ),
-                ),
-              ],
-            );
-          },
-          onTap: onTap,
+    );
+  }
+
+  Widget _buildTab(int index) {
+    final isActive = currentIndex == index;
+    return Expanded(
+      child: InkWell(
+        onTap: () => onTap(index),
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              icons[index],
+              width: 22,
+              height: 22,
+              colorFilter: ColorFilter.mode(
+                isActive ? const Color(0xff082922) : Colors.grey,
+                BlendMode.srcIn,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              titles[index],
+              style: TextStyle(
+                fontSize: 11,
+                color: isActive ? const Color(0xff082922) : Colors.grey,
+              ),
+            ),
+          ],
         ),
-      );
-    
+      ),
+    );
+  }
+}
+
+/// Computes the same notch path Flutter's BottomAppBar would draw,
+/// but from a fixed, locally-known FAB rect instead of querying
+/// Scaffold.geometryOf() (which is unsafe outside the paint phase).
+class _StaticNotchClipper extends CustomClipper<Path> {
+  final double fabDiameter;
+  final double notchMargin;
+
+  const _StaticNotchClipper({
+    required this.fabDiameter,
+    required this.notchMargin,
+  });
+
+  @override
+  Path getClip(Size size) {
+    final hostRect = Rect.fromLTWH(0, 0, size.width, size.height);
+    // FAB is centerDocked: horizontally centered, straddling the top edge.
+    final guestRect = Rect.fromCircle(
+      center: Offset(size.width / 2, 0),
+      radius: fabDiameter / 2 + notchMargin,
+    );
+    return const CircularNotchedRectangle().getOuterPath(hostRect, guestRect);
+  }
+
+  @override
+  bool shouldReclip(covariant _StaticNotchClipper oldClipper) {
+    return oldClipper.fabDiameter != fabDiameter ||
+        oldClipper.notchMargin != notchMargin;
   }
 }

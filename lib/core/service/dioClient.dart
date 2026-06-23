@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 
 class DioClient {
   late final Dio dio;
+  late final AuthInterceptor _authInterceptor;
 
   DioClient(TokenStorage tokenStorage) {
     dio = Dio(
@@ -19,8 +20,11 @@ class DioClient {
       ),
     );
 
+    _authInterceptor = AuthInterceptor(tokenStorage);
+    _authInterceptor.attachRetryDio(dio); // الربط المهم
+
     dio.interceptors.addAll([
-      AuthInterceptor(tokenStorage),
+      _authInterceptor,
       LoggerInterceptor.interceptor(),
     ]);
   }
