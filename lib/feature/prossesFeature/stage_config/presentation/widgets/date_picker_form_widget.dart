@@ -1,3 +1,5 @@
+import 'package:citzenapp/core/resource/color_manager.dart';
+
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/widets/date_picker_widget_entity.dart';
 import 'package:flutter/material.dart';
 
@@ -36,16 +38,16 @@ class _DatePickerFormWidgetState extends State<DatePickerFormWidget> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xff25624F), // اللون الأساسي للروزنامة
+              primary: ColorManager.primaryGreen,
               onPrimary: Colors.white,
-              onSurface: Color(0xff25624F),
+              surface: Colors.white,
+              onSurface: Color(0xff1a1a1a),
             ),
           ),
           child: child!,
         );
       },
     );
-
     if (picked != null) {
       setState(() => _selectedDate = picked);
       widget.formValues[widget.entity.id] = picked;
@@ -60,38 +62,74 @@ class _DatePickerFormWidgetState extends State<DatePickerFormWidget> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            InkWell(
-              onTap: () => _pickDate(context),
-              borderRadius: BorderRadius.circular(12), // لمنع خروج تأثير الضغط خارج الحقل
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: widget.entity.label,
-                  labelStyle: const TextStyle(color: Color(0xff817D7D), fontSize: 14),
-                  floatingLabelStyle: const TextStyle(color: Color(0xff25624F), fontWeight: FontWeight.bold),
-                  errorText: field.errorText,
-                  filled: true,
-                  fillColor: const Color(0xffF9F6EB),
-                  suffixIcon: const Icon(Icons.calendar_today_outlined, color: Color(0xff25624F), size: 20),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Color(0xffB8A47C), width: 1),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Color(0xff25624F), width: 2),
+            Row(
+              children: [
+                Text(
+                  widget.entity.label,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: ColorManager.darkGreen,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                child: Text(
-                  _selectedDate != null ? _formatDate(_selectedDate!) : 'اختر تاريخاً',
-                  style: TextStyle(
-                    color: _selectedDate == null ? const Color(0xff817D7D) : const Color(0xff25624F),
-                    fontSize: 15,
-                    fontWeight: _selectedDate == null ? FontWeight.normal : FontWeight.w500,
+                if (widget.entity.isRequired)
+                  const Text(
+                    ' *',
+                    style: TextStyle(color: ColorManager.red, fontSize: 14),
                   ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            GestureDetector(
+              onTap: () => _pickDate(context),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 14, vertical: 13),
+                decoration: BoxDecoration(
+                  color: ColorManager.extraLightBaieg,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: field.errorText != null
+                        ? ColorManager.red
+                        : Colors.transparent,
+                    width: 1.5,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today_outlined,
+                      size: 18,
+                      color: _selectedDate != null
+                          ? ColorManager.primaryGreen
+                          : ColorManager.gray,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      _selectedDate != null
+                          ? _formatDate(_selectedDate!)
+                          : 'اختر التاريخ',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: _selectedDate != null
+                            ? const Color(0xff1a1a1a)
+                            : ColorManager.gray,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
+            if (field.errorText != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 6, right: 4),
+                child: Text(
+                  field.errorText!,
+                  style: const TextStyle(
+                      color: ColorManager.red, fontSize: 12),
+                ),
+              ),
           ],
         );
       },

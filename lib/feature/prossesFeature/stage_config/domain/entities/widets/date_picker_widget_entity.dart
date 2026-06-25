@@ -49,4 +49,17 @@ class DatePickerWidgetEntity extends BaseWidgetEntity {
   String _formatDate(DateTime date) {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
+  @override
+Map<String, dynamic> toRawData() {
+  return {
+    'id': id,
+    'label': label,
+    'is_required': isRequired,
+    if (regex != null) 'regex': regex,
+    if (minDate != null)
+      'min_date': '${minDate!.year}-${minDate!.month.toString().padLeft(2, '0')}-${minDate!.day.toString().padLeft(2, '0')}',
+    if (maxDate != null)
+      'max_date': '${maxDate!.year}-${maxDate!.month.toString().padLeft(2, '0')}-${maxDate!.day.toString().padLeft(2, '0')}',
+  };
+}
 }

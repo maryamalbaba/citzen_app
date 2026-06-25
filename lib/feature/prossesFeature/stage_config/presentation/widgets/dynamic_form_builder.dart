@@ -1,3 +1,5 @@
+import 'package:citzenapp/core/resource/color_manager.dart';
+
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/widets/base_widget_entity.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/widets/check_list_widget_entity.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/widets/date_picker_widget_entity.dart';
@@ -15,62 +17,51 @@ import 'package:flutter/material.dart';
 
 class DynamicFormBuilder extends StatelessWidget {
   final List<BaseWidgetEntity> widgets;
-  final GlobalKey<FormState> formKey;
   final Map<String, dynamic> formValues;
 
   const DynamicFormBuilder({
     super.key,
     required this.widgets,
-    required this.formKey,
     required this.formValues,
   });
 
-  // القلب — يقرر أي widget يبني بناءً على نوع الـ entity
+  Widget _wrapInCard(Widget child) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: ColorManager.brown.withOpacity(0.2)),
+      ),
+      child: child,
+    );
+  }
+
   Widget _buildWidget(BaseWidgetEntity entity) {
     return switch (entity) {
-      TextFieldWidgetEntity e => TextFieldFormWidget(
-          entity: e,
-          formValues: formValues,
-        ),
-      DropdownWidgetEntity e => DropdownFormWidget(
-          entity: e,
-          formValues: formValues,
-        ),
-      RadioGroupWidgetEntity e => RadioGroupFormWidget(
-          entity: e,
-          formValues: formValues,
-        ),
-      CheckListWidgetEntity e => CheckListFormWidget(
-          entity: e,
-          formValues: formValues,
-        ),
-      DatePickerWidgetEntity e => DatePickerFormWidget(
-          entity: e,
-          formValues: formValues,
-        ),
-      FilePickerWidgetEntity e => FilePickerFormWidget(
-          entity: e,
-          formValues: formValues,
-        ),
-      _ => const SizedBox.shrink(), // أي نوع غير معروف نتجاهله بأمان
+      TextFieldWidgetEntity e => _wrapInCard(
+          TextFieldFormWidget(entity: e, formValues: formValues)),
+      DropdownWidgetEntity e => _wrapInCard(
+          DropdownFormWidget(entity: e, formValues: formValues)),
+      RadioGroupWidgetEntity e => _wrapInCard(
+          RadioGroupFormWidget(entity: e, formValues: formValues)),
+      CheckListWidgetEntity e => _wrapInCard(
+          CheckListFormWidget(entity: e, formValues: formValues)),
+      DatePickerWidgetEntity e => _wrapInCard(
+          DatePickerFormWidget(entity: e, formValues: formValues)),
+      FilePickerWidgetEntity e => _wrapInCard(
+          FilePickerFormWidget(entity: e)),
+      _ => const SizedBox.shrink(),
     };
   }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: widgets
-            .map(
-              (entity) => Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: _buildWidget(entity),
-              ),
-            )
-            .toList(),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: widgets.map((entity) => _buildWidget(entity)).toList(),
     );
   }
 }

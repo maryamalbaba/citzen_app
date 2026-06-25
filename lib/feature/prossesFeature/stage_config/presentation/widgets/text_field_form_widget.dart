@@ -1,5 +1,9 @@
+import 'package:citzenapp/core/resource/color_manager.dart';
+import 'package:citzenapp/core/theme/app_input_decoration.dart';
+
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/widets/text_field_widget_entity.dart';
 import 'package:flutter/material.dart';
+
 class TextFieldFormWidget extends StatelessWidget {
   final TextFieldWidgetEntity entity;
   final Map<String, dynamic> formValues;
@@ -12,45 +16,40 @@ class TextFieldFormWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      maxLength: entity.maxLength,
-      keyboardType: entity.inputType == 'number'
-          ? TextInputType.number
-          : TextInputType.text,
-      style: const TextStyle(color: Color(0xff25624F), fontSize: 15, fontWeight: FontWeight.w500),
-      decoration: InputDecoration(
-        labelText: entity.label,
-        labelStyle: const TextStyle(color: Color(0xff817D7D), fontSize: 14),
-        floatingLabelStyle: const TextStyle(color: Color(0xff25624F), fontWeight: FontWeight.bold),
-        hintText: entity.label,
-        hintStyle: const TextStyle(color: Color(0xff817D7D), fontSize: 13),
-        counterText: '',
-        filled: true,
-        fillColor: const Color(0xffF9F6EB),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              entity.label,
+              style: const TextStyle(
+                fontSize: 13,
+                color: ColorManager.darkGreen,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            if (entity.isRequired)
+              const Text(
+                ' *',
+                style: TextStyle(color: ColorManager.red, fontSize: 14),
+              ),
+          ],
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xffB8A47C), width: 1),
+        const SizedBox(height: 6),
+        TextFormField(
+          maxLength: entity.maxLength,
+          keyboardType: entity.inputType == 'number'
+              ? TextInputType.number
+              : TextInputType.text,
+          style: const TextStyle(fontSize: 14, color: Color(0xff1a1a1a)),
+          decoration: appInputDecoration(hint: entity.label).copyWith(
+            counterText: '',
+          ),
+          onChanged: (val) => formValues[entity.id] = val,
+          validator: (val) => entity.validate(val),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xff25624F), width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 1),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 2),
-        ),
-      ),
-      onChanged: (val) => formValues[entity.id] = val,
-      validator: (val) => entity.validate(val),
+      ],
     );
   }
 }

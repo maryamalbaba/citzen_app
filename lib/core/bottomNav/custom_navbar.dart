@@ -1,4 +1,3 @@
-
 import 'package:citzenapp/core/navigation/%D9%90app_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -86,19 +85,12 @@ class CustomBottomNav extends StatelessWidget {
         onPressed: () {
           Navigator.pushNamed(
             context,
-            AppRoutes.transactionTypes,
+            AppRoutes.choicFlow,
           );
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
-      // ══════════════ STATIC NOTCHED NAVBAR (no Scaffold.geometryOf) ══════════════
-      // PhysicalShape with a clipper we compute ourselves, instead of
-      // BottomAppBar(shape: ...), which relies on Scaffold.geometryOf()
-      // and is hit by a long-standing Flutter framework bug (flutter/flutter#108363,
-      // #126513, #134408, #140733) that throws
-      // "Scaffold.geometryOf() must only be accessed during the paint phase."
       bottomNavigationBar: SizedBox(
         height: 70,
         child: PhysicalShape(

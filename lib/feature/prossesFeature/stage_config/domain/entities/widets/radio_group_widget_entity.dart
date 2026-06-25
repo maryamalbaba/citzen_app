@@ -40,4 +40,17 @@ class RadioGroupWidgetEntity extends BaseWidgetEntity {
 
     return null;
   }
+
+  @override
+Map<String, dynamic> toRawData() {
+  return {
+    'id': id,
+    'label': label,
+    'is_required': isRequired,
+    if (regex != null) 'regex': regex,
+    'options': options
+        .map((o) => {'key': o.key, 'value': o.value})
+        .toList(),
+  };
+}
 }

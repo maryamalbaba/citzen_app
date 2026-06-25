@@ -27,12 +27,22 @@ import 'package:citzenapp/feature/prossesFeature/processes/data/source/auth_proc
 import 'package:citzenapp/feature/prossesFeature/processes/domain/repo/auth_process_repository.dart';
 import 'package:citzenapp/feature/prossesFeature/processes/domain/usecase/get_auth_processes_use_case.dart';
 import 'package:citzenapp/feature/prossesFeature/processes/presentation/bloc/process_bloc.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/data/datasources/file_upload_remote_datasource.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/data/datasources/stage_config_remote_datasource.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/data/datasources/stage_config_remote_datasource_impl.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/data/datasources/submit_form_remote_datasource.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/data/repo/file_upload_repository_impl.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/data/repo/stage_config_repository_impl.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/data/repo/submit_form_repository_impl.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/domain/repositories/file_upload_repository.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/repositories/stage_config_repository.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/domain/repositories/submit_form_repository.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/usecase/get_stage_config_usecase.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/domain/usecase/submit_form_usecase.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/domain/usecase/upload_file_usecase.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/presentation/bloc/file_bloc.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/presentation/bloc/stage_config_bloc.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/presentation/submitBloc/bloc/submit_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 
@@ -179,7 +189,48 @@ sl.registerLazySingleton<StageConfigRemoteDataSource>(
   () => StageConfigRemoteDataSourceImpl(sl<DioConsumer>()),
 );
 
+//
 
+// ===================================================
+// File Upload Feature
+// ===================================================
+
+// Bloc - factory لأنه يُنشأ مع كل صفحة استمارة
+sl.registerFactory(() => FileUploadBloc(sl()));
+
+// UseCase
+sl.registerLazySingleton(() => UploadFileUseCase(sl()));
+
+// Repository
+sl.registerLazySingleton<FileUploadRepository>(
+  () => FileUploadRepositoryImpl(remoteDataSource: sl()),
+);
+
+// DataSource - نمرر Dio مباشرة لأن الـ multipart يحتاجه
+sl.registerLazySingleton<FileUploadRemoteDataSource>(
+  () => FileUploadRemoteDataSourceImpl(sl<DioClient>().dio),
+);
+
+
+// ===================================================
+// Submit Form Feature
+// ===================================================
+
+// Bloc
+sl.registerFactory(() => SubmitFormBloc(sl()));
+
+// UseCase
+sl.registerLazySingleton(() => SubmitFormUseCase(sl()));
+
+// Repository
+sl.registerLazySingleton<SubmitFormRepository>(
+  () => SubmitFormRepositoryImpl(remoteDataSource: sl()),
+);
+
+// DataSource
+sl.registerLazySingleton<SubmitFormRemoteDataSource>(
+  () => SubmitFormRemoteDataSourceImpl(sl<DioConsumer>()),
+);
 }
 
 

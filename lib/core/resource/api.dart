@@ -6,4 +6,10 @@ class url {
 
   static const String reFreshToken = '/api/auth/refresh';
   static const String resendOtp = '/api/auth/resend-otp';
+  static const String uploadFile = '/api/transaction/files/upload';
+
+  static const String  stage_config = '/api/stage_config/config/';
+  //logout
+//resendotp
+//forgetpassword
 }

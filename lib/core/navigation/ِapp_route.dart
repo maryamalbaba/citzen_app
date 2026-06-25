@@ -1,3 +1,6 @@
+import 'package:citzenapp/feature/choice_flow.dart';
+import 'package:citzenapp/feature/choice_flow.dart';
+import 'package:citzenapp/feature/choice_flow.dart';
 import 'package:citzenapp/feature/prossesFeature/process_type/presentation/type_process.dart';
 import 'package:flutter/material.dart';
 import 'package:citzenapp/core/bottomNav/MainNavWrapper.dart';
@@ -12,7 +15,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String otp = '/otp';
   static const String transactionTypes= '/transactionTypes';
-
+  static const String choicFlow= '/ChoicFlow';
 
   // دالة الـ Routes العادية والـ Static الشاشات التي لا تحتاج معطيات
   static Map<String, WidgetBuilder> getRoutes() {
@@ -21,6 +24,7 @@ class AppRoutes {
       login: (context) => const LoginPage(),
       home: (context) => const MainNavWrapper(),
       transactionTypes: (context) => const TransactionTypesPage(),
+      choicFlow: (context) => const ChoicFlow(),
     };
   }
 

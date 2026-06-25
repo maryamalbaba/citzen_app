@@ -1,3 +1,4 @@
+import 'package:citzenapp/core/resource/color_manager.dart';
 import 'package:citzenapp/core/service/get_it/injection_container.dart';
 import 'package:citzenapp/feature/prossesFeature/processes/data/models/auth_process_model.dart';
 import 'package:citzenapp/feature/prossesFeature/processes/presentation/bloc/process_bloc.dart';
@@ -56,7 +57,7 @@ class _AuthProcessesPageState extends State<AuthProcessesPage> {
   @override
   Widget build(BuildContext context) {
     // الألوان المستوحاة من التصميم المرفق
-    const primaryGreen = Color(0xFF0D4633); // الأخضر الغامق للـ AppBar
+    // الأخضر الغامق للـ AppBar
     const scaffoldBg = Colors.white;
 
     return BlocProvider<AuthProcessBloc>(
@@ -64,7 +65,7 @@ class _AuthProcessesPageState extends State<AuthProcessesPage> {
       child: Scaffold(
         backgroundColor: scaffoldBg,
         appBar: AppBar(
-          backgroundColor: primaryGreen,
+          backgroundColor: ColorManager.primaryGreen,
           elevation: 0,
           title: Text(
             "  المعاملات المتاحة",
@@ -96,7 +97,7 @@ class _AuthProcessesPageState extends State<AuthProcessesPage> {
               case AuthProcessStatus.initial:
               case AuthProcessStatus.loading:
                 return const Center(
-                  child: CircularProgressIndicator(color: primaryGreen),
+                  child: CircularProgressIndicator(color: ColorManager.primaryGreen),
                 );
 
               case AuthProcessStatus.failure:
@@ -112,7 +113,7 @@ class _AuthProcessesPageState extends State<AuthProcessesPage> {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryGreen,
+                          backgroundColor: ColorManager.primaryGreen,
                           foregroundColor: Colors.white,
                         ),
                         onPressed: () {
@@ -136,7 +137,7 @@ class _AuthProcessesPageState extends State<AuthProcessesPage> {
                 }
 
                 return RefreshIndicator(
-                  color: primaryGreen,
+                  color: ColorManager.primaryGreen,
                   onRefresh: () async {
                     _bloc.add(FetchAuthProcessesEvent(id: widget.processTypeId));
                   },
@@ -159,7 +160,7 @@ class _AuthProcessesPageState extends State<AuthProcessesPage> {
                                   padding: EdgeInsets.symmetric(vertical: 16.0),
                                   child: Center(
                                       child: CircularProgressIndicator(
-                                          strokeWidth: 2, color: primaryGreen)),
+                                          strokeWidth: 2, color: ColorManager.primaryGreen)),
                                 );
                               }
 
@@ -198,7 +199,7 @@ class _AuthProcessesPageState extends State<AuthProcessesPage> {
   // بطاقة عرض المعاملة المحدثة مع تحديد منطقة الضغط بدقة بالبكسل
   Widget buildProcessCard({required String title, required VoidCallback onTap}) {
     const cardBg = Color(0xFFFBF8F3); // لون البيج الكريمي الفاتح من الصورة
-    const textGray = Color(0xFF9E8E75); // اللون البني الرمادي للنصوص داخل الكارد
+    const textGray = Color.fromARGB(255, 148, 133, 109); // اللون البني الرمادي للنصوص داخل الكارد
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16.0),

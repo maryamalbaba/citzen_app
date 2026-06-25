@@ -47,4 +47,17 @@ class TextFieldWidgetEntity extends BaseWidgetEntity {
 
     return null; // كل شيء تمام
   }
+
+  @override
+Map<String, dynamic> toRawData() {
+  return {
+    'id': id,
+    'label': label,
+    'is_required': isRequired,
+    if (regex != null) 'regex': regex,
+    'input_type': inputType,
+    if (maxLength != null) 'max_length': maxLength,
+    if (minLength != null) 'min_length': minLength,
+  };
+}
 }

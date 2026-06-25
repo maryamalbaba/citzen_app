@@ -36,4 +36,17 @@ class FilePickerWidgetEntity extends BaseWidgetEntity {
 
     return null;
   }
+  @override
+Map<String, dynamic> toRawData() {
+  return {
+    'id': id,
+    'label': label,
+    'is_required': isRequired,
+    if (regex != null) 'regex': regex,
+    'max_size_mb': maxSizeMb,
+    'allowed_extensions': allowedExtensions,
+    'allow_multiple': allowMultiple,
+    'type_doc_id': typeDocId,
+  };
+}
 }

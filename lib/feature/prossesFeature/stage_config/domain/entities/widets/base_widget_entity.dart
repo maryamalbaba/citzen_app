@@ -13,4 +13,7 @@ abstract class BaseWidgetEntity {
 
   /// كل widget يطبق منطق الـ validation الخاص فيه
   String? validate(dynamic value);
+
+  // كل entity تُرجع بياناتها الخام للـ submit
+  Map<String, dynamic> toRawData();
 }

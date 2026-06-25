@@ -1,3 +1,5 @@
+import 'package:citzenapp/core/resource/color_manager.dart';
+
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/widets/radio_group_widget_entity.dart';
 import 'package:flutter/material.dart';
 
@@ -19,12 +21,6 @@ class _RadioGroupFormWidgetState extends State<RadioGroupFormWidget> {
   String? _selectedKey;
   String? _errorText;
 
-  void _validate() {
-    setState(() {
-      _errorText = widget.entity.validate(_selectedKey);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return FormField<String>(
@@ -37,55 +33,95 @@ class _RadioGroupFormWidgetState extends State<RadioGroupFormWidget> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8, right: 4, left: 4),
-              child: Text(
-                widget.entity.label,
-                style: const TextStyle(color: Color(0xff25624F), fontWeight: FontWeight.bold, fontSize: 14),
-              ),
+            Row(
+              children: [
+                Text(
+                  widget.entity.label,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: ColorManager.darkGreen,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                if (widget.entity.isRequired)
+                  const Text(
+                    ' *',
+                    style: TextStyle(color: ColorManager.red, fontSize: 14),
+                  ),
+              ],
             ),
+            const SizedBox(height: 6),
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xffF9F6EB),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: _errorText != null ? Theme.of(context).colorScheme.error : const Color(0xffB8A47C),
-                  width: 1,
-                ),
+                color: ColorManager.extraLightBaieg,
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
-                children: widget.entity.options.map(
-                  (option) {
-                    final isSelected = _selectedKey == option.key;
-                    return RadioListTile<String>(
-                      title: Text(
-                        option.value,
-                        style: TextStyle(
-                          color: const Color(0xff25624F),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          fontSize: 14,
-                        ),
+                children: widget.entity.options.map((option) {
+                  final isSelected = _selectedKey == option.key;
+                  return InkWell(
+                    onTap: () {
+                      setState(() => _selectedKey = option.key);
+                      widget.formValues[widget.entity.id] = option.key;
+                    },
+                    borderRadius: BorderRadius.circular(10),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 10),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isSelected
+                                    ? ColorManager.primaryGreen
+                                    : ColorManager.brown,
+                                width: 2,
+                              ),
+                            ),
+                            child: isSelected
+                                ? Center(
+                                    child: Container(
+                                      width: 10,
+                                      height: 10,
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: ColorManager.primaryGreen,
+                                      ),
+                                    ),
+                                  )
+                                : null,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            option.value,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isSelected
+                                  ? ColorManager.primaryGreen
+                                  : const Color(0xff1a1a1a),
+                              fontWeight: isSelected
+                                  ? FontWeight.w500
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                        ],
                       ),
-                      value: option.key,
-                      groupValue: _selectedKey,
-                      activeColor: const Color(0xff25624F),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                      onChanged: (val) {
-                        setState(() => _selectedKey = val);
-                        widget.formValues[widget.entity.id] = val;
-                        _validate();
-                      },
-                    );
-                  },
-                ).toList(),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
             if (_errorText != null)
               Padding(
-                padding: const EdgeInsets.only(left: 12, top: 6, right: 12),
+                padding: const EdgeInsets.only(top: 6, right: 4),
                 child: Text(
                   _errorText!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
+                  style: const TextStyle(
+                      color: ColorManager.red, fontSize: 12),
                 ),
               ),
           ],
