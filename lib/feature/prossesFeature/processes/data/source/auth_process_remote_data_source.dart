@@ -1,3 +1,4 @@
+import 'package:citzenapp/core/resource/api.dart';
 import 'package:citzenapp/core/service/apiConsumer.dart';
 import 'package:citzenapp/core/service/reqestType.dart';
 import 'package:citzenapp/feature/prossesFeature/processes/data/models/auth_process_model.dart';
@@ -22,7 +23,7 @@ class AuthProcessRemoteDataSourceImpl implements AuthProcessRemoteDataSource {
     required int limit,
   }) async {
     // بناء المسار الديناميكي بدمج الـ ID
-    final path = '/api/process_definitions/auth/$id';
+    final path = url.process_definitions + id.toString();
 
     final response = await api.request(
       path: path,

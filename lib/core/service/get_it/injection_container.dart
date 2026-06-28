@@ -17,6 +17,11 @@ import 'package:citzenapp/feature/auth/resendotp/data/repo/reporesend.dart';
 import 'package:citzenapp/feature/auth/resendotp/data/source/remote.dart';
 import 'package:citzenapp/feature/auth/resendotp/domain/usecase/resendusecase.dart';
 import 'package:citzenapp/feature/auth/resendotp/presentation/bloc/resend_otp_bloc.dart';
+import 'package:citzenapp/feature/prossesFeature/myprocess/data/repo/transaction_repository_impl.dart';
+import 'package:citzenapp/feature/prossesFeature/myprocess/data/source/transaction_remote_datasource.dart';
+import 'package:citzenapp/feature/prossesFeature/myprocess/domain/repo/transaction_repository.dart';
+import 'package:citzenapp/feature/prossesFeature/myprocess/domain/usecase/get_transactions_usecase.dart';
+import 'package:citzenapp/feature/prossesFeature/myprocess/presentation/bloc/process_state_bloc.dart';
 import 'package:citzenapp/feature/prossesFeature/process_type/data/repo/repoimp.dart';
 import 'package:citzenapp/feature/prossesFeature/process_type/data/source/remote_source.dart';
 import 'package:citzenapp/feature/prossesFeature/process_type/domain/repo/repo_type.dart';
@@ -230,6 +235,23 @@ sl.registerLazySingleton<SubmitFormRepository>(
 // DataSource
 sl.registerLazySingleton<SubmitFormRemoteDataSource>(
   () => SubmitFormRemoteDataSourceImpl(sl<DioConsumer>()),
+);
+
+////
+sl.registerFactory(
+  () => TransactionBloc(sl()),
+);
+
+sl.registerLazySingleton<TransactionRemoteDataSource>(
+  () => TransactionRemoteDataSourceImpl(api: sl<DioConsumer>()),
+);
+
+sl.registerLazySingleton<TransactionRepository>(
+  () => TransactionRepositoryImpl(remote:sl()),
+);
+
+sl.registerLazySingleton(
+  () => GetTransactionsUseCase(sl()),
 );
 }
 

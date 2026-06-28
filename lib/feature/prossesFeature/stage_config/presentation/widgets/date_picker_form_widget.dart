@@ -24,35 +24,50 @@ class _DatePickerFormWidgetState extends State<DatePickerFormWidget> {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
-  Future<void> _pickDate(BuildContext context) async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ??
-          (widget.entity.minDate != null && now.isBefore(widget.entity.minDate!)
-              ? widget.entity.minDate!
-              : now),
-      firstDate: widget.entity.minDate ?? DateTime(1900),
-      lastDate: widget.entity.maxDate ?? DateTime(2100),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: ColorManager.primaryGreen,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Color(0xff1a1a1a),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null) {
-      setState(() => _selectedDate = picked);
-      widget.formValues[widget.entity.id] = picked;
-    }
+ Future<void> _pickDate(BuildContext context) async {
+  final now = DateTime.now();
+  final firstDate = widget.entity.minDate ?? DateTime(1900);
+  final lastDate = widget.entity.maxDate ?? DateTime(2100);
+
+  // initialDate يجب أن تكون بين firstDate و lastDate دائماً
+  DateTime initialDate;
+  if (_selectedDate != null) {
+    initialDate = _selectedDate!;
+  } else if (now.isAfter(lastDate)) {
+    // اليوم بعد الحد الأقصى — نبدأ من الحد الأقصى
+    initialDate = lastDate;
+  } else if (now.isBefore(firstDate)) {
+    // اليوم قبل الحد الأدنى — نبدأ من الحد الأدنى
+    initialDate = firstDate;
+  } else {
+    initialDate = now;
   }
+
+  final picked = await showDatePicker(
+    context: context,
+    initialDate: initialDate,
+    firstDate: firstDate,
+    lastDate: lastDate,
+    builder: (context, child) {
+      return Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: const ColorScheme.light(
+            primary: ColorManager.primaryGreen,
+            onPrimary: Colors.white,
+            surface: Colors.white,
+            onSurface: Color(0xff1a1a1a),
+          ),
+        ),
+        child: child!,
+      );
+    },
+  );
+
+  if (picked != null) {
+    setState(() => _selectedDate = picked);
+    widget.formValues[widget.entity.id] = picked;
+  }
+}
 
   @override
   Widget build(BuildContext context) {

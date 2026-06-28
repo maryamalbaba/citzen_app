@@ -15,7 +15,8 @@ class GetTypeProcSourceImpl implements AuthRemoteDataSource {
   Future<Map<String, dynamic>> getTypeRemote() async {
     final response = await api.request(
       path:
-          url.getTypeProcess, // تأكدي من تحديث هذا المسار حسب الـ API الخاص بكِ
+          url.getTypeProcess, 
+          
 
       method: RequestType.get,
     );

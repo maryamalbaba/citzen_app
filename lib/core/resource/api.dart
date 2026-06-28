@@ -9,6 +9,8 @@ class url {
   static const String uploadFile = '/api/transaction/files/upload';
 
   static const String  stage_config = '/api/stage_config/config/';
+   static const String  process_definitions = '/api/process_definitions/auth/';
+  static const String  myTransactions = '/api/transaction/my';
   //logout
 //resendotp
 //forgetpassword

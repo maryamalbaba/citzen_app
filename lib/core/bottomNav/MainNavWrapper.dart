@@ -1,6 +1,7 @@
 import 'package:citzenapp/core/bottomNav/custom_navbar.dart';
 import 'package:citzenapp/core/resource/color_manager.dart';
 import 'package:citzenapp/feature/homepage.dart';
+import 'package:citzenapp/feature/prossesFeature/myprocess/presentation/pages/ui.dart';
 import 'package:citzenapp/feature/prossesFeature/process_type/presentation/type_process.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +24,7 @@ class _MainNavWrapperState extends State<MainNavWrapper> {
   final List<Widget> pages = [
     const HomePage(),
    //!here
-    const MYTransactionTypesPage(),
+    const MyTransactionsPage(),
 
     const NotificationPage(),
 
@@ -66,11 +67,11 @@ class MYComplaintPage extends StatelessWidget {
   }
 }
 
-class MYTransactionTypesPage extends StatelessWidget {
-  const MYTransactionTypesPage({super.key});
+// class MYTransactionTypesPage extends StatelessWidget {
+//   const MYTransactionTypesPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Placeholder();
+//   }
+// }
