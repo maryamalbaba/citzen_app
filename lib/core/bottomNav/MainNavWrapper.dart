@@ -1,9 +1,12 @@
 import 'package:citzenapp/core/bottomNav/custom_navbar.dart';
 import 'package:citzenapp/core/resource/color_manager.dart';
+import 'package:citzenapp/core/service/get_it/injection_container.dart';
+import 'package:citzenapp/feature/auth/logout/presentation/bloc/logout_bloc.dart';
 import 'package:citzenapp/feature/homepage.dart';
 import 'package:citzenapp/feature/prossesFeature/myprocess/presentation/pages/ui.dart';
 import 'package:citzenapp/feature/prossesFeature/process_type/presentation/type_process.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
@@ -31,20 +34,23 @@ class _MainNavWrapperState extends State<MainNavWrapper> {
     const MYComplaintPage(),
   ];
 
-  @override
+ @override
   Widget build(BuildContext context) {
-    return CustomBottomNav(
-      body: pages[currentIndex],
-      currentIndex: currentIndex,
-      onTap: (index) {
-        setState(() {
-          currentIndex = index;
-        });
-      },
+    // Wrapping with BlocProvider solves the ProviderNotFoundException
+    return BlocProvider(
+      create: (context) => sl<LogoutBloc>(),
+      child: CustomBottomNav(
+        body: pages[currentIndex],
+        currentIndex: currentIndex,
+        onTap: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+      ),
     );
   }
 }
-
 class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});
 
@@ -66,12 +72,3 @@ class MYComplaintPage extends StatelessWidget {
     );
   }
 }
-
-// class MYTransactionTypesPage extends StatelessWidget {
-//   const MYTransactionTypesPage({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Placeholder();
-//   }
-// }

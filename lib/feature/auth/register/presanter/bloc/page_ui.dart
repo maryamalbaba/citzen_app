@@ -168,9 +168,20 @@ class _RegisterPageState extends State<RegisterPage> {
                             const SizedBox(height: 30),
 
                             // زر الإرسال ثابت ولا يتغير شكله الداخلي عند التحميل
+                            InkWell(
+                              onTap: (){
+                                 // Remove progress loader
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/login',
+                    (route) => false,
+                  );
+                              },
+                              child: Text("لدي حساب سابق")),
+SizedBox(height: 30,),
                             SizedBox(
-                              width: 160,
-                              height: 48,
+                              width: 150,
+                              height: 28,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: ColorManager.darkGreen,

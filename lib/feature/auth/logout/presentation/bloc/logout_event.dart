@@ -1,4 +1,3 @@
-part of 'logout_bloc.dart';
+abstract class LogoutEvent {}
 
-@immutable
-sealed class LogoutEvent {}
+class LogoutSubmitted extends LogoutEvent {}

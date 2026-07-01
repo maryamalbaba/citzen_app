@@ -1,6 +1,12 @@
-part of 'logout_bloc.dart';
+abstract class LogoutState {}
 
-@immutable
-sealed class LogoutState {}
+class LogoutInitial extends LogoutState {}
 
-final class LogoutInitial extends LogoutState {}
+class LogoutLoading extends LogoutState {}
+
+class LogoutSuccess extends LogoutState {}
+
+class LogoutFailure extends LogoutState {
+  final String errorMessage;
+  LogoutFailure(this.errorMessage);
+}

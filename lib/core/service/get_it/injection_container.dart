@@ -7,6 +7,11 @@ import 'package:citzenapp/feature/auth/login/data/data_source/LoginRemoteDataSou
 import 'package:citzenapp/feature/auth/login/domain/repo/LoginRepository.dart';
 import 'package:citzenapp/feature/auth/login/domain/usecase/usecase.dart';
 import 'package:citzenapp/feature/auth/login/presentation/bloc/login_bloc.dart';
+import 'package:citzenapp/feature/auth/logout/data/repo/repoImp.dart';
+import 'package:citzenapp/feature/auth/logout/data/source/remote.dart';
+import 'package:citzenapp/feature/auth/logout/domain/repo/repo.dart';
+import 'package:citzenapp/feature/auth/logout/domain/usecase/usecase.dart';
+import 'package:citzenapp/feature/auth/logout/presentation/bloc/logout_bloc.dart';
 import 'package:citzenapp/feature/auth/otp/data/repo/repoImp.dart';
 import 'package:citzenapp/feature/auth/otp/data/source/remotImpl.dart';
 import 'package:citzenapp/feature/auth/otp/data/source/remotedata.dart';
@@ -253,6 +258,18 @@ sl.registerLazySingleton<TransactionRepository>(
 sl.registerLazySingleton(
   () => GetTransactionsUseCase(sl()),
 );
+
+sl.registerFactory(() => LogoutBloc(logoutUseCase: sl()));
+sl.registerLazySingleton(() => LogoutUseCase(sl()));
+sl.registerLazySingleton<LogoutRepository>(
+    () => LogoutRepositoryImp(
+      remoteDataSource: sl(),
+      tokenStorage: sl(),
+    ),
+  );
+  sl.registerLazySingleton<LogoutRemoteDataSourceImpl>(
+    () => LogoutRemoteDataSourceImpl(sl()),
+  );
 }
 
 

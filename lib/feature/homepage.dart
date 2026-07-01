@@ -1,7 +1,8 @@
 import 'package:citzenapp/core/resource/color_manager.dart';
-import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,13 +24,11 @@ class _HomePageState extends State<HomePage> {
 
   /// MOCK
   final bool hasProcesses = true;
-
   final bool hasComplaints = true;
 
   @override
   void initState() {
     super.initState();
-
     _autoSlider();
   }
 
@@ -60,35 +59,36 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return 
-      Container(
-        color: Colors.white,
+    // نستخدم Directionality للتأكد المطلق من أن الصفحة تقرأ الاتجاه الصحيح
+    // حتى وإن حدث أي تعارض في الـ MaterialApp
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Container(
+        color: ColorManager.backgroundLight,
         child: SafeArea(
-        //  bottom: false, // 2. إلغاء القص من الأسفل ليمتد المحتوى خلف شريط التنقل
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 14.h),
-          
+                SizedBox(height: 14),
+  
                 /// SLIDER
                 Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: 16,
-                  ),
-                  height: 170.h,
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  height: 170,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18.r),
+                    borderRadius: BorderRadius.circular(18),
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black12,
-                        blurRadius: 8.r,
+                        blurRadius: 8,
                       ),
                     ],
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18.r),
+                    borderRadius: BorderRadius.circular(18),
                     child: PageView.builder(
                       controller: pageController,
                       itemCount: sliderImages.length,
@@ -106,9 +106,9 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-          
-                SizedBox(height: 10.h),
-          
+  
+                SizedBox(height: 10),
+  
                 /// INDICATOR
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -116,148 +116,124 @@ class _HomePageState extends State<HomePage> {
                     sliderImages.length,
                     (index) {
                       return AnimatedContainer(
-                        duration: const Duration(
-                          milliseconds: 300,
-                        ),
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 3.w,
-                        ),
-                        width: currentPage == index ? 18.w : 8.w,
-                        height: 8.h,
+                        duration: const Duration(milliseconds: 300),
+                        margin: EdgeInsets.symmetric(horizontal: 3),
+                        width: currentPage == index ? 18 : 8,
+                        height: 8,
                         decoration: BoxDecoration(
                           color: currentPage == index
                               ? ColorManager.darkGreen
                               : Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(
-                            20.r,
-                          ),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       );
                     },
                   ),
                 ),
-          
-                SizedBox(height:  15),
-          
-                /// PROCESS STEPPER
-                if (hasProcesses)
-                  _buildStepperCard(
-                    title: 'حالة المعاملة',
-                  ),
-          
-                /// COMPLAINT STEPPER
-                if (hasComplaints)
-                  _buildStepperCard(
-                    title: 'حالة الشكوى',
-                  ),
-          
-                SizedBox(height: 10),
-          
-                /// ACTIONS
+  
+                SizedBox(height: 20),
+  
+                /// ACTIONS / SERVICES SECTION
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                       Container(
-                        height: 90.h,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: const Color(
-                            0xffB3A45F,
-                          ),
-                          borderRadius: BorderRadius.circular(
-                            18.r,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 5.r,
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            "أخذ موعد من المديرية ",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
+                      Text(
+                        "الخدمات الإلكترونية",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xff3A3A3A),
                         ),
                       ),
+                      SizedBox(height: 12),
+  
+                      /// الخدمة الأولى: أخذ موعد من المديرية
+                      _buildServiceCard(
+                        title: "أخذ موعد من المديرية",
+                        subtitle: "احجز موعدك بسهولة وفي أي وقت",
+                        icon: Icons.calendar_today_outlined,
+                        iconBgColor: ColorManager.darkGreen,
+                        onTap: () {},
+                      ),
+  
                       SizedBox(height: 14),
+  
+                      /// الخدمة الثانية: دليل المعاملات
+                      _buildServiceCard(
+                        title: "دليل المعاملات",
+                        subtitle: "تعرف على متطلبات كل معاملة",
+                        icon: Icons.menu_book_outlined,
+                        iconBgColor: ColorManager.goldenBrown,
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
+                ),
+  
+                SizedBox(height: 25),
+  
+                /// LATEST NEWS & ANNOUNCEMENTS SECTION
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "آخر الأخبار والإعلانات",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xff3A3A3A),
+                        ),
+                      ),
+                      SizedBox(height: 12),
+  
                       Container(
-                        height: 90.h,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: const Color(
-                            0xffB3A45F,
-                          ),
-                          borderRadius: BorderRadius.circular(
-                            18.r,
-                          ),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(18),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 5.r,
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                        child: Center(
-                          child: Text(
-                            'دليل المعاملات',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
+                        child: Column(
+                          children: [
+                            /// الإعلان الأول
+                            _buildAnnouncementItem(
+                              title: "تحديث أوقات الدوام الرسمي",
+                              description: "يُعلم المراجعون بتعديل أوقات الدوام اعتباراً من الأسبوع القادم من ٨ صباحاً حتى ٣ عصراً.",
+                              time: "اليوم",
+                              badgeColor: ColorManager.goldenBrown,
                             ),
-                          ),
+                            
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              child: Divider(color: Colors.grey.shade100, height: 1),
+                            ),
+  
+                            /// الإعلان الثاني
+                            _buildAnnouncementItem(
+                              title: "فتح باب التسجيل للعام الجديد",
+                              description: "بدأ استقبال طلبات التسجيل للعام الدراسي القادم عبر المنصة الإلكترونية.",
+                              time: "أمس",
+                              badgeColor: ColorManager.darkGreen,
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
-          
-                SizedBox(height: 120.h),
+  
+                SizedBox(height: 120),
               ],
-            ),
-          ),
-        ),
-      );
-    
-  }
-
-  Widget _buildActionCard({
-    required String title,
-  }) {
-    return Container(
-      height: 90.h,
-      decoration: BoxDecoration(
-        color: const Color(0xffB3A45F),
-        borderRadius: BorderRadius.circular(
-          18.r,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5.r,
-          ),
-        ],
-      ),
-      child: Center(
-        child: SizedBox(
-          width: 55.w,
-          child: Text(
-            title,
-            
-           
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 10,
-              color: Colors.white,
             ),
           ),
         ),
@@ -265,136 +241,147 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-Widget _buildStepperCard({
-  required String title,
-}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-  
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
+  /// بطاقة الخدمات بعد تصحيح التوجيه التلقائي للـ RTL للغة العربية
+  Widget _buildServiceCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color iconBgColor,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18.r),
+      child: Container(
+        height: 100,
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-      ),
-  
-      SizedBox(height: 15),
-  
-      Directionality(
-        textDirection: TextDirection.rtl,
-        child: EasyStepper(
-          activeStep: 2,
-  
-          lineStyle: LineStyle(
-            lineLength: 40.w,
-            lineThickness: 2,
-            lineType: LineType.normal,
-            defaultLineColor: Colors.grey.shade300,
-          ),
-  
-          stepRadius: 22.r,
-  
-          activeStepBackgroundColor:
-              Colors.white,
-  
-          finishedStepBackgroundColor:
-              ColorManager.darkGreen,
-  
-          finishedStepTextColor: Colors.black,
-  
-          activeStepTextColor: Colors.black,
-  
-          unreachedStepTextColor: Colors.black,
-  
-          showLoadingAnimation: false,
-  
-          steps: [
-  
-            EasyStep(
-              customStep: CircleAvatar(
-                radius: 22.r,
-                backgroundColor: ColorManager.darkGreen,
-                child: Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 14,
-                ),
+        child: Row(
+          children: [
+            // 1. الأيقونة الملونة (تصبح تلقائياً على اليمين في الـ RTL)
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: iconBgColor,
+                borderRadius: BorderRadius.circular(16.r),
               ),
-              title: 'تم\n الاستلام',
-            ),
-  
-            EasyStep(
-              customStep: CircleAvatar(
-                
-                radius: 22.r,
-                backgroundColor: ColorManager.darkGreen,
-                child: Icon(
-                  Icons.check,
-                  color: Colors.white,
-                   size: 14,
-                ),
+              child: Icon(
+                icon,
+                color: Colors.white,
+                size: 26,
               ),
-              title: 'قيد \nالمعالجة',
             ),
-  
-            EasyStep(
-              customStep: Container(
-                width: 44.w,
-                height: 44.h,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: ColorManager.darkGreen,
+            SizedBox(width: 16),
+            
+            // 2. النصوص (العنوان والوصف) وتأخذ المساحة المتبقية
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start, // يبدأ من اليمين في لغتنا العربية
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: const Color(0xff222222),
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                child: Center(
-                  child: Text('3'),
-                ),
+                  SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: ColorManager.textGrey,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
               ),
-              title: 'تم إرسال \nالرد',
+            ),
+            
+            // 3. سهم الانتقال (يصبح تلقائياً في أقصى اليسار)
+            // نستخدم السهم المتوافق مع اتجاه اللغة
+            Icon(
+              Icons.arrow_forward_ios, 
+              size: 14,
+              color: Colors.grey.shade400,
             ),
           ],
         ),
       ),
-    ],
-  );
-}
-  Widget _stepItem({
+    );
+  }
+
+  /// عنصر الإعلان مع توجيه RTL سليم ومستقر
+  Widget _buildAnnouncementItem({
     required String title,
-    required String number,
-    bool isDone = false,
+    required String description,
+    required String time,
+    required Color badgeColor,
   }) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 18.r,
-          backgroundColor: isDone ? ColorManager.darkGreen : Colors.white,
-          child: isDone
-              ? Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 14,
-                )
-              : Text(
-                  number,
+    return Padding(
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, // يبدأ النص من اليمين تلقائياً
+        children: [
+          Row(
+            children: [
+              // النقطة الملونة
+              Container(
+                width: 8.w,
+                height: 8.h,
+                decoration: BoxDecoration(
+                  color: badgeColor,
+                  shape: BoxShape.circle,
+                    ),
+                  ),
+              SizedBox(width: 8.w),
+              // العنوان
+              Expanded(
+                child: Text(
+                  title,
                   style: TextStyle(
-                    color: ColorManager.darkGreen,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xff222222),
                   ),
                 ),
-        ),
-        SizedBox(height: 8.h),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 10,
+              ),
+              // الوقت (يُدفع تلقائياً لليسار بفضل Expanded للعنوان)
+              Text(
+                time,
+                style: TextStyle(
+                  color: Colors.grey.shade400,
+                  fontSize: 11,
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
+          SizedBox(height: 8),
+          // تفاصيل الخبر
+          Text(
+            description,
+            style: TextStyle(
+              fontSize: 12,
+              color: const Color(0xff555555),
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
