@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                       /// الخدمة الأولى: أخذ موعد من المديرية
                       _buildServiceCard(
                         title: "أخذ موعد من المديرية",
-                        subtitle: "احجز موعدك بسهولة وفي أي وقت",
+                        subtitle: "احجز موعدك بسهولة",
                         icon: Icons.calendar_today_outlined,
                         iconBgColor: ColorManager.darkGreen,
                         onTap: () {},
@@ -162,7 +162,7 @@ class _HomePageState extends State<HomePage> {
   
                       /// الخدمة الثانية: دليل المعاملات
                       _buildServiceCard(
-                        title: "دليل المعاملات",
+                        title: "خدمة ساعدني ",
                         subtitle: "تعرف على متطلبات كل معاملة",
                         icon: Icons.menu_book_outlined,
                         iconBgColor: ColorManager.goldenBrown,
@@ -298,6 +298,7 @@ class _HomePageState extends State<HomePage> {
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
+                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 4),
                   Text(
@@ -307,6 +308,7 @@ class _HomePageState extends State<HomePage> {
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),

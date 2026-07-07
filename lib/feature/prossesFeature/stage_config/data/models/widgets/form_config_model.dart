@@ -1,4 +1,4 @@
-
+import 'package:citzenapp/feature/prossesFeature/stage_config/data/models/templlate_mpdel.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/data/models/widgets/widget_parser.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/form_config_entity.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/widets/base_widget_entity.dart';
@@ -6,13 +6,16 @@ import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/wi
 class FormConfigModel {
   final String formId;
   final String formName;
+
   final List<dynamic> widgetsJson;
- // final int transactionId;
+  final List<dynamic> templatesJson; // ← عدلنا من List<dynamic>
+  // final int transactionId;
 
   const FormConfigModel({
     required this.formId,
     required this.formName,
     required this.widgetsJson,
+    required this.templatesJson,
     // required this.transactionId,
   });
 
@@ -23,6 +26,10 @@ class FormConfigModel {
       formId: configJson['form_id'] as String,
       formName: configJson['form_name'] as String,
       widgetsJson: configJson['widgets'] as List,
+      // الباك أحياناً يرسل template وأحياناً templates
+      templatesJson:
+          (configJson['templates'] ?? configJson['template']) as List? ?? [],
+
       // transactionId: json['data']['transaction_id'] as int,
     );
   }
@@ -31,14 +38,21 @@ class FormConfigModel {
     // هنا يمر كل widget على الـ Parser
     final parsedWidgets = widgetsJson
         .map((w) => WidgetParser.parse(w as Map<String, dynamic>))
-        .whereType<BaseWidgetEntity>() // يتجاهل الـ null (widget_type غير معروف)
+        .whereType<
+            BaseWidgetEntity>() // يتجاهل الـ null (widget_type غير معروف)
+        .toList();
+    final parsedTemplates = templatesJson
+        .map(
+            (t) => TemplateModel.fromJson(t as Map<String, dynamic>).toEntity())
         .toList();
 
     return FormConfigEntity(
       formId: formId,
       formName: formName,
       widgets: parsedWidgets,
-     // transactionId: transactionId,
+      templates: parsedTemplates,
+
+      // transactionId: transactionId,
     );
   }
 }

@@ -22,6 +22,15 @@ import 'package:citzenapp/feature/auth/resendotp/data/repo/reporesend.dart';
 import 'package:citzenapp/feature/auth/resendotp/data/source/remote.dart';
 import 'package:citzenapp/feature/auth/resendotp/domain/usecase/resendusecase.dart';
 import 'package:citzenapp/feature/auth/resendotp/presentation/bloc/resend_otp_bloc.dart';
+import 'package:citzenapp/feature/pinFeature/data/repository/repoImp.dart';
+import 'package:citzenapp/feature/pinFeature/data/source/local.dart';
+import 'package:citzenapp/feature/pinFeature/data/source/remote.dart';
+import 'package:citzenapp/feature/pinFeature/domin/repository/repo.dart';
+import 'package:citzenapp/feature/pinFeature/domin/usecase/changepin.dart';
+import 'package:citzenapp/feature/pinFeature/domin/usecase/checkpinStatus.dart';
+import 'package:citzenapp/feature/pinFeature/domin/usecase/setupPin.dart';
+import 'package:citzenapp/feature/pinFeature/domin/usecase/verifypin.dart';
+import 'package:citzenapp/feature/pinFeature/presentation/bloc/pin_bloc.dart';
 import 'package:citzenapp/feature/prossesFeature/myprocess/data/repo/transaction_repository_impl.dart';
 import 'package:citzenapp/feature/prossesFeature/myprocess/data/source/transaction_remote_datasource.dart';
 import 'package:citzenapp/feature/prossesFeature/myprocess/domain/repo/transaction_repository.dart';
@@ -270,6 +279,42 @@ sl.registerLazySingleton<LogoutRepository>(
   sl.registerLazySingleton<LogoutRemoteDataSourceImpl>(
     () => LogoutRemoteDataSourceImpl(sl()),
   );
+
+
+// ============================================================================
+//  Pin Feature (قفل التطبيق)
+// ============================================================================
+
+// Bloc
+sl.registerFactory(() => PinBloc(
+      setupPinUseCase: sl(),
+      verifyPinUseCase: sl(),
+      changePinUseCase: sl(),
+      checkPinStatusUseCase: sl(),
+    ));
+
+// Use cases
+sl.registerLazySingleton(() => SetupPinUseCase(sl()));
+sl.registerLazySingleton(() => VerifyPinUseCase(sl()));
+sl.registerLazySingleton(() => ChangePinUseCase(sl()));
+sl.registerLazySingleton(() => CheckPinStatusUseCase(sl()));
+
+// Repository
+sl.registerLazySingleton<PinRepository>(
+  () => PinRepositoryImpl(
+    remoteDataSource: sl(),
+    localDataSource: sl(),
+  ),
+);
+
+// Data sources
+sl.registerLazySingleton<PinRemoteDataSource>(
+  () => PinRemoteDataSourceImpl(sl<DioConsumer>()),
+);
+sl.registerLazySingleton<PinLocalDataSource>(
+  () => PinLocalDataSourceImpl(const FlutterSecureStorage()),
+);
+
 }
 
 

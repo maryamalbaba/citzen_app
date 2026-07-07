@@ -1,7 +1,11 @@
 import 'package:citzenapp/core/navigation/%D9%90app_route.dart';
+import 'package:citzenapp/core/service/get_it/injection_container.dart';
 import 'package:citzenapp/feature/auth/logout/presentation/bloc/logout_bloc.dart';
 import 'package:citzenapp/feature/auth/logout/presentation/bloc/logout_event.dart';
 import 'package:citzenapp/feature/auth/logout/presentation/bloc/logout_state.dart';
+import 'package:citzenapp/feature/pinFeature/domin/usecase/checkpinStatus.dart';
+import 'package:citzenapp/feature/pinFeature/presentation/pages/change_pin_page.dart';
+import 'package:citzenapp/feature/pinFeature/presentation/pages/setup_pin_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -81,21 +85,35 @@ class CustomBottomNav extends StatelessWidget {
           ],
         ),
       ),
-      endDrawer:Drawer(
+      endDrawer: Drawer(
         backgroundColor: Colors.white,
         child: Column(
           children: [
             const UserAccountsDrawerHeader(
               decoration: BoxDecoration(color: Color(0xff082922)),
-              accountName: Text("اسم المستخدم", style: TextStyle(fontWeight: FontWeight.bold)),
+              accountName: Text("اسم المستخدم",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               accountEmail: Text("user@domain.com"),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Icon(Icons.person, color: Color(0xff082922), size: 40),
               ),
             ),
+            //!
+            ListTile(
+              leading: const Icon(Icons.pin_outlined, color: Color(0xff082922)),
+              title: const Text(
+                "قفل التطبيق (PIN)",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xff082922),
+                  fontSize: 14,
+                ),
+              ),
+              onTap: () => _openPinSettings(context),
+            ),
             const Spacer(),
-            
+
             // Logout Interaction Card Implementation Container
             BlocListener<LogoutBloc, LogoutState>(
               listener: (context, state) {
@@ -104,7 +122,8 @@ class CustomBottomNav extends StatelessWidget {
                     context: context,
                     barrierDismissible: false,
                     builder: (_) => const Center(
-                      child: CircularProgressIndicator(color: Color(0xff082922)),
+                      child:
+                          CircularProgressIndicator(color: Color(0xff082922)),
                     ),
                   );
                 }
@@ -253,4 +272,20 @@ class _StaticNotchClipper extends CustomClipper<Path> {
     return oldClipper.fabDiameter != fabDiameter ||
         oldClipper.notchMargin != notchMargin;
   }
+}
+
+
+Future<void> _openPinSettings(BuildContext context) async {
+  // نتحقق أولاً: هل المستخدم أنشأ PIN من قبل أم لا، لنقرر الشاشة الصحيحة
+  final hasPin = await sl<CheckPinStatusUseCase>()();
+  if (!context.mounted) return;
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => hasPin
+          ? const ChangePinPage()
+          : SetupPinPage(onCreated: () => Navigator.pop(context)),
+    ),
+  );
 }

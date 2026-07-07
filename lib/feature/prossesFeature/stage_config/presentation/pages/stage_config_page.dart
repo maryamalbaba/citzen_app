@@ -1,11 +1,6 @@
 import 'package:citzenapp/core/resource/color_manager.dart';
 import 'package:citzenapp/core/service/get_it/injection_container.dart';
-
-
-import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/form_config_entity.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/submit_form_entity.dart';
-
-
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/widets/base_widget_entity.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/widets/check_list_widget_entity.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/widets/date_picker_widget_entity.dart';
@@ -15,15 +10,9 @@ import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/wi
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/widets/text_field_widget_entity.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/presentation/bloc/file_bloc.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/presentation/bloc/file_state.dart';
-
-
 import 'package:citzenapp/feature/prossesFeature/stage_config/presentation/bloc/stage_config_bloc.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/presentation/bloc/stage_config_event.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/presentation/bloc/stage_config_state.dart';
-
-
-
-
 import 'package:citzenapp/feature/prossesFeature/stage_config/presentation/submitBloc/bloc/submit_bloc.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/presentation/submitBloc/bloc/submit_event.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/presentation/submitBloc/bloc/submit_state.dart';
@@ -43,6 +32,9 @@ class StageConfigPage extends StatefulWidget {
 class _StageConfigPageState extends State<StageConfigPage> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, dynamic> _formValues = {};
+
+  // map خاص بكل template — key هو id الـ template
+  final Map<int, Map<String, dynamic>> _templateFormValues = {};
 
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -83,16 +75,48 @@ class _StageConfigPageState extends State<StageConfigPage> {
     };
   }
 
+  // نفس منطق _extractValue لكن تأخذ map معين بدل _formValues
+  dynamic _extractValueFromMap(
+    BaseWidgetEntity entity,
+    Map<String, dynamic> valuesMap,
+    FileUploadState fileState,
+  ) {
+    return switch (entity) {
+      FilePickerWidgetEntity _ =>
+        fileState.getSuccessfulUploads(entity.id).toList(),
+      DatePickerWidgetEntity _ => valuesMap[entity.id] as DateTime?,
+      CheckListWidgetEntity _ =>
+        valuesMap[entity.id] as List<String>? ?? [],
+      _ => valuesMap[entity.id] as String? ?? '',
+    };
+  }
+
   void _onSubmit(BuildContext context, StageConfigLoaded state) {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final fileState = context.read<FileUploadBloc>().state;
 
+    // بناء widgets الرئيسية
     final submitWidgets = state.formConfig.widgets.map((entity) {
       return SubmitWidgetEntity(
         widgetType: _widgetTypeFromEntity(entity),
         data: entity.toRawData(),
         value: _extractValue(entity, fileState),
+      );
+    }).toList();
+
+    // بناء templates مع قيمها
+    final submitTemplates = state.formConfig.templates.map((template) {
+      final templateValues = _templateFormValues[template.id] ?? {};
+      return SubmitTemplateEntity(
+        id: template.id,
+        widgets: template.widgets.map((entity) {
+          return SubmitWidgetEntity(
+            widgetType: _widgetTypeFromEntity(entity),
+            data: entity.toRawData(),
+            value: _extractValueFromMap(entity, templateValues, fileState),
+          );
+        }).toList(),
       );
     }).toList();
 
@@ -105,7 +129,7 @@ class _StageConfigPageState extends State<StageConfigPage> {
       formId: state.formConfig.formId,
       formName: state.formConfig.formName,
       widgets: submitWidgets,
-      templates: const [],
+      templates: submitTemplates,
       note: '',
     );
 
@@ -191,6 +215,64 @@ class _StageConfigPageState extends State<StageConfigPage> {
                       formValues: _formValues,
                     ),
                   ),
+
+                  // ===== قسم الـ Templates =====
+                  if (state.formConfig.templates.isNotEmpty) ...[
+                    _buildSectionLabel('النماذج المرفقة'),
+                    ...state.formConfig.templates.map((template) {
+                      // نضمن وجود map لكل template
+                      _templateFormValues.putIfAbsent(
+                          template.id, () => {});
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // رأس الـ template
+                            Container(
+                              width: double.infinity,
+                              margin: const EdgeInsets.only(bottom: 10),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: ColorManager.primaryGreen
+                                    .withOpacity(0.07),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: ColorManager.primaryGreen
+                                      .withOpacity(0.2),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.article_outlined,
+                                    color: ColorManager.primaryGreen,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'نموذج ${template.id}',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: ColorManager.primaryGreen,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // widgets الـ template
+                            DynamicFormBuilder(
+                              widgets: template.widgets,
+                              formValues: _templateFormValues[template.id]!,
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ],
+
                   const SizedBox(height: 100),
                 ],
               ),
@@ -211,7 +293,8 @@ class _StageConfigPageState extends State<StageConfigPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
                   GestureDetector(
@@ -248,8 +331,7 @@ class _StageConfigPageState extends State<StageConfigPage> {
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.12),
-                  border:
-                      Border.all(color: Colors.white.withOpacity(0.2)),
+                  border: Border.all(color: Colors.white.withOpacity(0.2)),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -331,10 +413,8 @@ class _StageConfigPageState extends State<StageConfigPage> {
           label,
           style: TextStyle(
               fontSize: 10,
-              color:
-                  active ? ColorManager.darkGreen : ColorManager.gray,
-              fontWeight:
-                  active ? FontWeight.w600 : FontWeight.normal),
+              color: active ? ColorManager.darkGreen : ColorManager.gray,
+              fontWeight: active ? FontWeight.w600 : FontWeight.normal),
         ),
       ],
     );
@@ -378,8 +458,7 @@ class _StageConfigPageState extends State<StageConfigPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border:
-              Border.all(color: ColorManager.brown.withOpacity(0.2)),
+          border: Border.all(color: ColorManager.brown.withOpacity(0.2)),
         ),
         child: Column(
           children: [
@@ -444,20 +523,18 @@ class _StageConfigPageState extends State<StageConfigPage> {
                     color: ColorManager.darkGreen,
                     fontWeight: FontWeight.w500)),
             const Text(' *',
-                style:
-                    TextStyle(color: ColorManager.red, fontSize: 14)),
+                style: TextStyle(color: ColorManager.red, fontSize: 14)),
           ],
         ),
         const SizedBox(height: 6),
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
-          style:
-              const TextStyle(fontSize: 14, color: Color(0xff1a1a1a)),
+          style: const TextStyle(fontSize: 14, color: Color(0xff1a1a1a)),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(
-                color: ColorManager.gray, fontSize: 13),
+            hintStyle:
+                const TextStyle(color: ColorManager.gray, fontSize: 13),
             filled: true,
             fillColor: ColorManager.extraLightBaieg,
             contentPadding: const EdgeInsets.symmetric(
@@ -477,13 +554,13 @@ class _StageConfigPageState extends State<StageConfigPage> {
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(
-                  color: ColorManager.red, width: 1.5),
+              borderSide:
+                  const BorderSide(color: ColorManager.red, width: 1.5),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(
-                  color: ColorManager.red, width: 1.5),
+              borderSide:
+                  const BorderSide(color: ColorManager.red, width: 1.5),
             ),
           ),
           validator: (val) {
@@ -511,8 +588,7 @@ class _StageConfigPageState extends State<StageConfigPage> {
           decoration: BoxDecoration(
             color: ColorManager.extraLightBaieg,
             border: Border(
-              top: BorderSide(
-                  color: ColorManager.brown.withOpacity(0.25)),
+              top: BorderSide(color: ColorManager.brown.withOpacity(0.25)),
             ),
           ),
           child: SizedBox(
@@ -525,8 +601,7 @@ class _StageConfigPageState extends State<StageConfigPage> {
                 disabledBackgroundColor:
                     ColorManager.primaryGreen.withOpacity(0.6),
                 foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),

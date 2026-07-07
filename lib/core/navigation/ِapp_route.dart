@@ -1,6 +1,7 @@
 import 'package:citzenapp/feature/choice_flow.dart';
 import 'package:citzenapp/feature/choice_flow.dart';
 import 'package:citzenapp/feature/choice_flow.dart';
+import 'package:citzenapp/feature/pinFeature/presentation/pages/pin_gate.dart';
 import 'package:citzenapp/feature/prossesFeature/process_type/presentation/type_process.dart';
 import 'package:flutter/material.dart';
 import 'package:citzenapp/core/bottomNav/MainNavWrapper.dart';
@@ -22,7 +23,7 @@ class AppRoutes {
     return {
       register: (context) => const RegisterPage(),
       login: (context) => const LoginPage(),
-      home: (context) => const MainNavWrapper(),
+     home: (context) => const PinGate(child: MainNavWrapper()), 
       transactionTypes: (context) => const TransactionTypesPage(),
       choicFlow: (context) => const ChoicFlow(),
     };

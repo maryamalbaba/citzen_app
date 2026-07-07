@@ -10,6 +10,15 @@ class SubmitWidgetEntity {
   });
 }
 
+class SubmitTemplateEntity {
+  final int id;
+  final List<SubmitWidgetEntity> widgets;
+
+  const SubmitTemplateEntity({
+    required this.id,
+    required this.widgets,
+  });
+}
 class SubmitFormEntity {
   final String firstName;
   final String lastName;
@@ -19,7 +28,7 @@ class SubmitFormEntity {
   final String formId;
   final String formName;
   final List<SubmitWidgetEntity> widgets;
-  final List<dynamic> templates; 
+  final List<SubmitTemplateEntity> templates; 
   final String note;
 
   const SubmitFormEntity({

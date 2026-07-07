@@ -14,11 +14,17 @@ class SubmitFormModel {
       'widgets': entity.widgets
           .map((w) => _widgetToJson(w))
           .toList(),
-      'templates': entity.templates,
+      'templates': entity.templates.map((t) => _templateToJson(t)).toList(),
       'note': entity.note,
     };
   }
-
+// تحويل template كامل مع قيم الـ widgets
+  static Map<String, dynamic> _templateToJson(SubmitTemplateEntity template) {
+    return {
+      'id': template.id,
+      'widgets': template.widgets.map((w) => _widgetToJson(w)).toList(),
+    };
+  }
   static Map<String, dynamic> _widgetToJson(SubmitWidgetEntity widget) {
     return {
       'widget_type': widget.widgetType,

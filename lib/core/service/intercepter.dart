@@ -48,68 +48,85 @@ class AuthInterceptor extends Interceptor {
     return handler.next(options);
   }
 
-  @override
-  void onError(DioException err, ErrorInterceptorHandler handler) async {
-    final String? currentPath = err.requestOptions.path;
+@override
+void onError(DioException err, ErrorInterceptorHandler handler) async {
+  final String? currentPath = err.requestOptions.path;
 
-    // طباعة تشخيصية مؤقتة - احذفها بعد حل المشكلة
-    print('🔴 onError triggered | path: $currentPath | status: ${err.response?.statusCode} | time: ${DateTime.now()}');
+  print('🔴 onError triggered | path: $currentPath | status: ${err.response?.statusCode} | time: ${DateTime.now()}');
 
-    // لا تحاول تجديد التوكن لو الطلب الفاشل هو نفسه login أو refresh
-    if ((currentPath?.contains(url.login) ?? false) ||
-        (currentPath?.contains(url.reFreshToken) ?? false)) {
-      return handler.next(err);
-    }
-
-    if (err.response?.statusCode == 401) {
-      final refreshToken = await tokenStorage.getRefreshToken();
-
-      if (refreshToken == null) {
-        await tokenStorage.clearTokens();
-        _navigateToLogin();
-        return handler.next(err);
-      }
-
-      try {
-        final response = await _refreshDio.post(
-          url.reFreshToken,
-          data: {"refreshToken": refreshToken},
-        );
-
-        print('🟡 Refresh response status: ${response.statusCode} | time: ${DateTime.now()}');
-
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          final newAccessToken = response.data['data']['token'];
-          final newRefreshToken = response.data['data']['refreshToken'] ?? refreshToken;
-
-          await tokenStorage.saveTokens(
-            accessToken: newAccessToken,
-            refreshToken: newRefreshToken,
-          );
-
-          final options = err.requestOptions;
-          options.headers['Authorization'] = 'Bearer $newAccessToken';
-
-          // مهم: استخدم dio الأساسي لإعادة الطلب، لا _refreshDio
-          final cloneReq = await (_retryDio ?? _refreshDio).fetch(options);
-          return handler.resolve(cloneReq);
-        }
-
-        // أي حالة غير 200/201 من الـ refresh (401, 403, إلخ) = الجلسة منتهية فعلاً
-        await tokenStorage.clearTokens();
-        _navigateToLogin();
-        return handler.next(err);
-      } catch (e) {
-        print('🔴 Refresh failed with exception: $e | time: ${DateTime.now()}');
-        await tokenStorage.clearTokens();
-        _navigateToLogin();
-        return handler.next(err);
-      }
-    }
-
+  // 1️⃣ استثني فقط الـ login والـ refresh الفعليين من التجديد
+  if ((currentPath?.contains(url.login) ?? false) ||
+      (currentPath?.contains(url.reFreshToken) ?? false)) {
     return handler.next(err);
   }
 
+  final responseData = err.response?.data;
+  final businessErrorCode = (responseData is Map) ? responseData['error'] as String? : null;
+
+  // 2️⃣ قائمة الأخطاء المنطقية (بزنس) اللي السيرفر بيرجع فيها 401 بس التوكن سليم
+  // تأكدي من مطابقة هذه الكلمات مع ما يرجعه السيرفر عند إدخال PIN خاطئ
+  const businessLogic401Errors = <String>{
+    'WRONG_PIN', 
+    'INVALID_PIN',
+    'SECURITY_ERROR', 
+  };
+
+  // لو الـ 401 بسبب PIN خاطئ وليس بسبب توكن منتهي، مرري الخطأ للـ UI مباشرة
+  if (err.response?.statusCode == 401 &&
+      businessErrorCode != null &&
+      businessLogic401Errors.contains(businessErrorCode)) {
+    return handler.next(err); 
+  }
+
+  // 3️⃣ إذا وصلنا لهون والـ status == 401، يعني التوكن منتهي (حتى لو كنا بصفحة الـ PIN)
+  if (err.response?.statusCode == 401) {
+    final refreshToken = await tokenStorage.getRefreshToken();
+    
+    if (refreshToken == null) {
+      await tokenStorage.clearTokens();
+      _navigateToLogin();
+      return handler.next(err);
+    }
+
+    try {
+      print('🔄 Attempting to refresh token for path: $currentPath');
+      final response = await _refreshDio.post(
+        url.reFreshToken,
+        data: {"refreshToken": refreshToken},
+      );
+
+      print('🟡 Refresh response status: ${response.statusCode} | time: ${DateTime.now()}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final newAccessToken = response.data['data']['token'];
+        final newRefreshToken = response.data['data']['refreshToken'] ?? refreshToken;
+
+        await tokenStorage.saveTokens(
+          accessToken: newAccessToken,
+          refreshToken: newRefreshToken,
+        );
+
+        final options = err.requestOptions;
+        options.headers['Authorization'] = 'Bearer $newAccessToken';
+
+        // إعادة إرسال طلب الـ verify-app-pin بالتوكن الجديد
+        final cloneReq = await (_retryDio ?? _refreshDio).fetch(options);
+        return handler.resolve(cloneReq);
+      }
+
+      await tokenStorage.clearTokens();
+      _navigateToLogin();
+      return handler.next(err);
+    } catch (e) {
+      print('🔴 Refresh failed with exception: $e');
+      await tokenStorage.clearTokens();
+      _navigateToLogin();
+      return handler.next(err);
+    }
+  }
+
+  return handler.next(err);
+}
   void _navigateToLogin() {
     NavigationService.navigatorKey.currentState?.pushNamedAndRemoveUntil(
       '/login',
