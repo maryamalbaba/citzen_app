@@ -4,12 +4,11 @@ import 'package:citzenapp/core/service/reqestType.dart';
 import 'package:dio/dio.dart';
 
 abstract class SubmitFormRemoteDataSource {
-  Future<void> submitForm({
+  Future<Map<String, dynamic>?> submitForm({
     required int processId,
     required Map<String, dynamic> body,
   });
 }
-
 
 class SubmitFormRemoteDataSourceImpl implements SubmitFormRemoteDataSource {
   final ApiConsumer api;
@@ -17,18 +16,15 @@ class SubmitFormRemoteDataSourceImpl implements SubmitFormRemoteDataSource {
   SubmitFormRemoteDataSourceImpl(this.api);
 
   @override
-  Future<void> submitForm({
+  Future<Map<String, dynamic>?> submitForm({
     required int processId,
     required Map<String, dynamic> body,
   }) async {
-    try {
-      await api.request(
-        path: '/api/transaction/submit/process/$processId',
-        method: RequestType.post,
-        data: body,
-      );
-    } on DioException catch (e) {
-      throw ErrorHandler.handle(e);
-    }
+    final response = await api.request(
+      path: '/api/transaction/submit/process/$processId',
+      method: RequestType.post,
+      data: body,
+    );
+    return response as Map<String, dynamic>?;
   }
 }

@@ -3,12 +3,17 @@ import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/su
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/repositories/submit_form_repository.dart';
 import 'package:dartz/dartz.dart';
 
+import 'package:dartz/dartz.dart';
+
+import 'package:citzenapp/feature/prossesFeature/stage_config/domain/entities/submit_form_entity.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/domain/repositories/submit_form_repository.dart';
+
 class SubmitFormUseCase {
   final SubmitFormRepository repository;
 
   SubmitFormUseCase(this.repository);
 
-  Future<Either<Failure, void>> call({
+  Future<Either<Failure, Map<String, dynamic>?>> call({
     required int processId,
     required SubmitFormEntity entity,
   }) {

@@ -155,24 +155,97 @@ class _StageConfigPageState extends State<StageConfigPage> {
       child: Scaffold(
         backgroundColor: ColorManager.extraLightBaieg,
         body: BlocListener<SubmitFormBloc, SubmitFormState>(
-          listener: (context, state) {
-            if (state is SubmitFormSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('تم إرسال المعاملة بنجاح'),
-                  backgroundColor: ColorManager.darkGreen,
+  listener: (context, state) {
+    if (state is SubmitFormSuccess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم إرسال المعاملة بنجاح'),
+          backgroundColor: ColorManager.darkGreen,
+        ),
+      );
+      Navigator.pop(context);
+
+    } else if (state is SubmitFormDuplicate) {
+      // ← نعرض dialog واضح بدل snackbar
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          contentPadding: const EdgeInsets.all(24),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: ColorManager.brown.withOpacity(0.1),
+                  shape: BoxShape.circle,
                 ),
-              );
-              Navigator.pop(context);
-            } else if (state is SubmitFormError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: ColorManager.red,
+                child: const Icon(
+                  Icons.info_outline_rounded,
+                  color: ColorManager.brown,
+                  size: 32,
                 ),
-              );
-            }
-          },
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'تم التقديم مسبقاً',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: ColorManager.darkGreen,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'لقد قمت بتقديم هذه المعاملة من قبل، ولا يمكن إعادة تقديمها مرة أخرى.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: ColorManager.gray,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context); // يغلق الـ dialog
+                    Navigator.pop(context); // يرجع للصفحة السابقة
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorManager.primaryGreen,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text('حسناً'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+    } else if (state is SubmitFormError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(state.message),
+          backgroundColor: ColorManager.red,
+        ),
+      );
+    }
+  },
+ 
+
           child: BlocBuilder<StageConfigBloc, StageConfigState>(
             builder: (context, state) {
               return switch (state) {
