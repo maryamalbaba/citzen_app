@@ -15,6 +15,10 @@ class SubmitFormSuccess extends SubmitFormState {
   const SubmitFormSuccess();
 }
 
+// ← جديد — حالة خاصة بالتكرار
+class SubmitFormDuplicate extends SubmitFormState {
+  const SubmitFormDuplicate();
+}
 class SubmitFormError extends SubmitFormState {
   final String message;
   const SubmitFormError(this.message);

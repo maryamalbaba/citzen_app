@@ -5,7 +5,8 @@ class FormConfigEntity {
   final String formId;
   final String formName;
   final List<BaseWidgetEntity> widgets;
-  final List<TemplateEntity> templates; // ← عدلنا من List<dynamic>
+  final List<TemplateEntity> templates;
+  final List<int> templateIds; // ← جديد — الـ ids القادمة من الـ config
   // final int transactionId;
 
   const FormConfigEntity({
@@ -13,6 +14,19 @@ class FormConfigEntity {
     required this.formName,
     required this.widgets,
     required this.templates,
+    required this.templateIds,
     // required this.transactionId,
   });
+
+  // نسخة محدثة مع الـ templates بعد جلبها
+  FormConfigEntity copyWith({List<TemplateEntity>? templates}) {
+    return FormConfigEntity(
+      formId: formId,
+      formName: formName,
+      widgets: widgets,
+      templates: templates ?? this.templates,
+      templateIds: templateIds,
+      // transactionId: transactionId,
+    );
+  }
 }

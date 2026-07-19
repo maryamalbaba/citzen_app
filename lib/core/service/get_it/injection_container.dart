@@ -46,16 +46,20 @@ import 'package:citzenapp/feature/prossesFeature/processes/data/source/auth_proc
 import 'package:citzenapp/feature/prossesFeature/processes/domain/repo/auth_process_repository.dart';
 import 'package:citzenapp/feature/prossesFeature/processes/domain/usecase/get_auth_processes_use_case.dart';
 import 'package:citzenapp/feature/prossesFeature/processes/presentation/bloc/process_bloc.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/data/datasources/document_template_remote_datasource.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/data/datasources/file_upload_remote_datasource.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/data/datasources/stage_config_remote_datasource.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/data/datasources/stage_config_remote_datasource_impl.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/data/datasources/submit_form_remote_datasource.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/data/repo/document_template_repository_impl.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/data/repo/file_upload_repository_impl.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/data/repo/stage_config_repository_impl.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/data/repo/submit_form_repository_impl.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/domain/repositories/document_template_repository.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/repositories/file_upload_repository.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/repositories/stage_config_repository.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/repositories/submit_form_repository.dart';
+import 'package:citzenapp/feature/prossesFeature/stage_config/domain/usecase/get_document_template_usecase.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/usecase/get_stage_config_usecase.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/usecase/submit_form_usecase.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/domain/usecase/upload_file_usecase.dart';
@@ -192,9 +196,10 @@ sl.registerFactory(() => AuthProcessBloc(sl()));
 // Stage Config Feature
 // ===================================================
 
-// Bloc
-sl.registerFactory(() => StageConfigBloc(sl()));
-
+sl.registerFactory(() => StageConfigBloc(
+  getStageConfigUseCase: sl(),
+  getDocumentTemplateUseCase: sl(), // ← أضفناها
+));
 // UseCase
 sl.registerLazySingleton(() => GetStageConfigUseCase(sl()));
 
@@ -315,6 +320,22 @@ sl.registerLazySingleton<PinLocalDataSource>(
   () => PinLocalDataSourceImpl(const FlutterSecureStorage()),
 );
 
+// ===================================================
+// Document Template Feature
+// ===================================================
+
+// UseCase
+sl.registerLazySingleton(() => GetDocumentTemplateUseCase(sl()));
+
+// Repository
+sl.registerLazySingleton<DocumentTemplateRepository>(
+  () => DocumentTemplateRepositoryImpl(remoteDataSource: sl()),
+);
+
+// DataSource
+sl.registerLazySingleton<DocumentTemplateRemoteDataSource>(
+  () => DocumentTemplateRemoteDataSourceImpl(sl<DioConsumer>()),
+);
 }
 
 
