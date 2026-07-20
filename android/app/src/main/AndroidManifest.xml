@@ -11,11 +11,15 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
-     <!-- إعداد اختياري ومستحسن: تحديد القناة الافتراضية للإشعارات في الخلفية -->
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="high_importance_channel" />
+    <!-- تحديد القناة الافتراضية للإشعارات ذات الأولوية القصوى -->
+<meta-data
+    android:name="com.google.firebase.messaging.default_notification_channel_id"
+    android:value="high_importance_channel" />
 
+<!-- تحديد الأيقونة الافتراضية للإشعار -->
+<meta-data
+    android:name="com.google.firebase.messaging.default_notification_icon"
+    android:resource="@mipmap/ic_launcher" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

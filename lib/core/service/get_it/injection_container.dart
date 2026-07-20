@@ -3,7 +3,7 @@ import 'package:citzenapp/core/service/Token/tokenStorage.dart';
 import 'package:citzenapp/core/service/apiConsumer.dart';
 import 'package:citzenapp/core/service/dioClient.dart';
 import 'package:citzenapp/core/service/dioCunsumer.dart';
-import 'package:citzenapp/core/service/notification/notification_device_service.dart';
+import 'package:citzenapp/core/service/notificationService/notification_device_service.dart';
 import 'package:citzenapp/feature/auth/deviceToken/data/datasources/device_token_remote_datasource.dart';
 import 'package:citzenapp/feature/auth/login/data/data_source/LoginRemoteDataSource.dart';
 import 'package:citzenapp/feature/auth/login/domain/repo/LoginRepository.dart';
@@ -24,6 +24,11 @@ import 'package:citzenapp/feature/auth/resendotp/data/repo/reporesend.dart';
 import 'package:citzenapp/feature/auth/resendotp/data/source/remote.dart';
 import 'package:citzenapp/feature/auth/resendotp/domain/usecase/resendusecase.dart';
 import 'package:citzenapp/feature/auth/resendotp/presentation/bloc/resend_otp_bloc.dart';
+import 'package:citzenapp/feature/notification/data/repositories/notifications_repository_impl.dart';
+import 'package:citzenapp/feature/notification/data/source/notifications_remote_datasource.dart';
+import 'package:citzenapp/feature/notification/domain/repo/notifications_repository.dart';
+import 'package:citzenapp/feature/notification/domain/repo/usecase/get_notifications_usecase.dart';
+import 'package:citzenapp/feature/notification/presentation/bloc/notification_bloc.dart';
 import 'package:citzenapp/feature/pinFeature/data/repository/repoImp.dart';
 import 'package:citzenapp/feature/pinFeature/data/source/local.dart';
 import 'package:citzenapp/feature/pinFeature/data/source/remote.dart';
@@ -348,6 +353,27 @@ sl.registerLazySingleton<DeviceTokenRemoteDataSource>(
 // Device Sync Service
 sl.registerLazySingleton<NotificationDeviceService>(
   () => NotificationDeviceService(sl<DeviceTokenRemoteDataSource>()),
+);
+
+
+// 1. Data Source
+sl.registerLazySingleton<NotificationsRemoteDataSource>(
+  () => NotificationsRemoteDataSourceImpl(sl<ApiConsumer>()),
+);
+
+// 2. Repository
+sl.registerLazySingleton<NotificationsRepository>(
+  () => NotificationsRepositoryImpl(sl<NotificationsRemoteDataSource>()),
+);
+
+// 3. UseCase
+sl.registerLazySingleton<GetNotificationsUseCase>(
+  () => GetNotificationsUseCase(sl<NotificationsRepository>()),
+);
+
+// 4. BLoC (ملاحظة: الـ Bloc يُسجّل بـ Factory حتى ينشأ نسخة جديدة في كل مرة تفتح الشاشة)
+sl.registerFactory<NotificationsBloc>(
+  () => NotificationsBloc(getNotificationsUseCase: sl<GetNotificationsUseCase>()),
 );
 }
 

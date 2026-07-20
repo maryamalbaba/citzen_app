@@ -1,3 +1,4 @@
+import 'package:citzenapp/core/resource/api.dart';
 import 'package:citzenapp/core/service/apiConsumer.dart';
 import 'package:citzenapp/core/service/reqestType.dart';
 
@@ -14,7 +15,7 @@ class LogoutRemoteDataSourceImpl implements LogoutRemoteDataSource {
   @override
   Future<bool> logout({required String refreshToken}) async {
     final response = await apiConsumer.request(
-      path: '/api/auth/logout',
+      path: url.logout,
       method: RequestType.post,
       data: {
         'refreshToken': refreshToken,

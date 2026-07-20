@@ -2,6 +2,7 @@ import 'package:citzenapp/core/bottomNav/MainNavWrapper.dart';
 import 'package:citzenapp/core/game/ConnectivityGate.dart';
 import 'package:citzenapp/core/navigation/%D9%90app_route.dart';
 import 'package:citzenapp/core/navigation/NavigationService.dart';
+import 'package:citzenapp/core/service/notificationService/notification_service.dart';
 import 'package:citzenapp/feature/auth/login/presentation/login_ui.dart';
 import 'package:citzenapp/feature/auth/otp/presentation/bloc/OtpUi.dart';
 import 'package:citzenapp/feature/auth/register/presanter/bloc/page_ui.dart';
@@ -20,11 +21,14 @@ import 'package:citzenapp/core/service/get_it/injection_container.dart'
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env.dev");
+  
+  await di.init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // 2. تهيئة خدمة الإشعارات والنغمات والصلاحيات
+  await NotificationService.initialize();
   // Initialize  service locator!
-  await di.init();
   runApp(const MyApp());
 }
 

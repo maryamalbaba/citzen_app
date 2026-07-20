@@ -1,4 +1,5 @@
 
+import 'package:citzenapp/core/resource/api.dart';
 import 'package:citzenapp/core/service/apiConsumer.dart';
 import 'package:citzenapp/core/service/reqestType.dart';   
 
@@ -23,7 +24,7 @@ class DeviceTokenRemoteDataSourceImpl implements DeviceTokenRemoteDataSource {
   }) async {
     // سيقوم AuthInterceptor تلقائياً بإضافة Bearer Token في الهيدر
     await apiConsumer.request(
-      path: '/api/auth/device-token', // تأكدي إن كان الباث يتطلب /api/auth/device-token أو حسب baseUrl لديكِ
+      path: url.deviecFcmToken, // تأكدي إن كان الباث يتطلب /api/auth/device-token أو حسب baseUrl لديكِ
       method: RequestType.post,
       data: {
         'fcm_token': fcmToken,

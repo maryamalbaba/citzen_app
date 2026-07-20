@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:citzenapp/core/bottomNav/MainNavWrapper.dart';
 import 'package:citzenapp/core/resource/color_manager.dart';
-import 'package:citzenapp/core/service/notification/notification_device_service.dart';
+import 'package:citzenapp/core/service/notificationService/notification_device_service.dart';
 import 'package:citzenapp/feature/auth/otp/data/model/modelOtp.dart';
 import 'package:citzenapp/feature/auth/otp/presentation/bloc/otp_bloc.dart';
 import 'package:citzenapp/feature/auth/otp/presentation/bloc/otp_event.dart';
@@ -96,7 +96,7 @@ class _OtpPageState extends State<OtpPage> {
               listeners: [
                 // 1. مراقب التحقق العادي
                 BlocListener<OtpBloc, OtpState>(
-                  listener: (context, state) {
+                  listener: (context, state) async {
                     if (state is OtpSuccess) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('تم التحقق بنجاح')),
@@ -105,10 +105,13 @@ class _OtpPageState extends State<OtpPage> {
                       // 🔥 [المكان الصحيح الأول]: استدعاء ربط الجهاز بالإشعارات فور نجاح الـ OTP
                       // يتم استدعاؤها عبر di.sl المشركتين بها في بداية الملف
 
-                      
-                      di.sl<NotificationDeviceService>().syncDeviceTokenWithServer();
+                      // تأخير بسيط 300ms لضمان كتابة التوكن في Storage بنجاح قبل المزامنة
+                      await Future.delayed(const Duration(milliseconds: 300));
 
-
+                      // استدعاء المزامنة
+                      di
+                          .sl<NotificationDeviceService>()
+                          .syncDeviceTokenWithServer();
                       //
                       Navigator.pushAndRemoveUntil(
                         context,

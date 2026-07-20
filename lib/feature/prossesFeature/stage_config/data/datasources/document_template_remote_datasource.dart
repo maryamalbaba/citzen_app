@@ -1,3 +1,4 @@
+import 'package:citzenapp/core/resource/api.dart';
 import 'package:citzenapp/core/service/apiConsumer.dart';
 import 'package:citzenapp/core/service/reqestType.dart';
 import 'package:citzenapp/feature/prossesFeature/stage_config/data/models/document_template_model.dart';
@@ -15,7 +16,7 @@ class DocumentTemplateRemoteDataSourceImpl
   @override
   Future<DocumentTemplateModel> getTemplate(int id) async {
     final response = await api.request(
-      path: '/api/document-templates/$id',
+      path: url.templateDocument + id.toString(),
       method: RequestType.get,
     );
     return DocumentTemplateModel.fromJson(

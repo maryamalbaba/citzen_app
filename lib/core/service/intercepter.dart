@@ -4,7 +4,7 @@ import 'package:citzenapp/core/resource/api.dart';
 import 'package:citzenapp/core/service/Token/tokenStorage.dart';
 import 'package:citzenapp/core/service/apiConsumer.dart';
 import 'package:citzenapp/core/service/get_it/injection_container.dart';
-import 'package:citzenapp/core/service/notification/notification_device_service.dart';
+import 'package:citzenapp/core/service/notificationService/notification_device_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -120,7 +120,7 @@ class AuthInterceptor extends Interceptor {
           
           //
 
-          
+
           final options = err.requestOptions;
           options.headers['Authorization'] = 'Bearer $newAccessToken';
 
