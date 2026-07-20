@@ -1,8 +1,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 1. صلاحية الإنترنت (للاتصال بالفايربيز والـ API) -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    
+    <!-- 2. صلاحية عرض الإشعارات (مهمة جداً لأندرويد 13 فما فوق) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
     <application
         android:label="citzenapp"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+     <!-- إعداد اختياري ومستحسن: تحديد القناة الافتراضية للإشعارات في الخلفية -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="high_importance_channel" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

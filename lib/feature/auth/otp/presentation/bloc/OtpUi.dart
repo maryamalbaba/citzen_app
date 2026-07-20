@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:citzenapp/core/bottomNav/MainNavWrapper.dart';
 import 'package:citzenapp/core/resource/color_manager.dart';
+import 'package:citzenapp/core/service/notification/notification_device_service.dart';
 import 'package:citzenapp/feature/auth/otp/data/model/modelOtp.dart';
 import 'package:citzenapp/feature/auth/otp/presentation/bloc/otp_bloc.dart';
 import 'package:citzenapp/feature/auth/otp/presentation/bloc/otp_event.dart';
@@ -100,6 +101,15 @@ class _OtpPageState extends State<OtpPage> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('تم التحقق بنجاح')),
                       );
+
+                      // 🔥 [المكان الصحيح الأول]: استدعاء ربط الجهاز بالإشعارات فور نجاح الـ OTP
+                      // يتم استدعاؤها عبر di.sl المشركتين بها في بداية الملف
+
+                      
+                      di.sl<NotificationDeviceService>().syncDeviceTokenWithServer();
+
+
+                      //
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
@@ -218,13 +228,14 @@ class _OtpPageState extends State<OtpPage> {
                                 color: _isResendButtonEnable
                                     ? ColorManager.darkGreen
                                     : Colors.grey,
-                              
                               ),
                             ),
                           );
                         },
                       ),
-                      SizedBox(height: 10,),
+                      SizedBox(
+                        height: 10,
+                      ),
 
                       SizedBox(
                         width: 110,

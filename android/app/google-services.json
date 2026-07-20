@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "686602340761",
+    "project_id": "directorate-education-project",
+    "storage_bucket": "directorate-education-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:686602340761:android:e13b891a2e225342b9eb08",
+        "android_client_info": {
+          "package_name": "com.example.citzena"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQ_o9mBlzmNzhySxXyOPnp9ELH4uk1pDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:686602340761:android:fd24b11300bbdc3cb9eb08",
+        "android_client_info": {
+          "package_name": "com.example.citzenapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQ_o9mBlzmNzhySxXyOPnp9ELH4uk1pDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

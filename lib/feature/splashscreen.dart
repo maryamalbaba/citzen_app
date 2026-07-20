@@ -1,6 +1,7 @@
 import 'package:citzenapp/core/service/Token/tokenStorage.dart';
 import 'package:citzenapp/core/service/get_it/injection_container.dart'
     as di; // للتأكد من مسار الـ sl
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -19,6 +20,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkAuthStatus() async {
+    //!test
+    String? token = await FirebaseMessaging.instance.getToken();
+    print("Firebase Device Token: $token");
+
     // انتظر ثانيتين لعرض اللوجو أو الأنيميشن
     await Future.delayed(const Duration(seconds: 2));
 

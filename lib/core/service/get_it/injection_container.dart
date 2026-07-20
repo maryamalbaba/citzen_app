@@ -3,6 +3,8 @@ import 'package:citzenapp/core/service/Token/tokenStorage.dart';
 import 'package:citzenapp/core/service/apiConsumer.dart';
 import 'package:citzenapp/core/service/dioClient.dart';
 import 'package:citzenapp/core/service/dioCunsumer.dart';
+import 'package:citzenapp/core/service/notification/notification_device_service.dart';
+import 'package:citzenapp/feature/auth/deviceToken/data/datasources/device_token_remote_datasource.dart';
 import 'package:citzenapp/feature/auth/login/data/data_source/LoginRemoteDataSource.dart';
 import 'package:citzenapp/feature/auth/login/domain/repo/LoginRepository.dart';
 import 'package:citzenapp/feature/auth/login/domain/usecase/usecase.dart';
@@ -335,6 +337,17 @@ sl.registerLazySingleton<DocumentTemplateRepository>(
 // DataSource
 sl.registerLazySingleton<DocumentTemplateRemoteDataSource>(
   () => DocumentTemplateRemoteDataSourceImpl(sl<DioConsumer>()),
+);
+
+
+// Remote Data Source
+sl.registerLazySingleton<DeviceTokenRemoteDataSource>(
+  () => DeviceTokenRemoteDataSourceImpl(sl<ApiConsumer>()),
+);
+
+// Device Sync Service
+sl.registerLazySingleton<NotificationDeviceService>(
+  () => NotificationDeviceService(sl<DeviceTokenRemoteDataSource>()),
 );
 }
 

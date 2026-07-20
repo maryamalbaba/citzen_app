@@ -7,6 +7,8 @@ import 'package:citzenapp/feature/auth/otp/presentation/bloc/OtpUi.dart';
 import 'package:citzenapp/feature/auth/register/presanter/bloc/page_ui.dart';
 import 'package:citzenapp/feature/prossesFeature/process_type/presentation/type_process.dart';
 import 'package:citzenapp/feature/splashscreen.dart';
+import 'package:citzenapp/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,6 +20,9 @@ import 'package:citzenapp/core/service/get_it/injection_container.dart'
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env.dev");
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   // Initialize  service locator!
   await di.init();
   runApp(const MyApp());

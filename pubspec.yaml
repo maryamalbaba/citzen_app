@@ -52,6 +52,9 @@ dependencies:
   animated_bottom_navigation_bar: ^1.4.0
   equatable: ^2.0.8
   file_picker: ^8.0.0
+  firebase_core: ^4.7.0
+  firebase_messaging: ^16.2.0
+  device_info_plus: ^11.3.0
   
 
 dev_dependencies:
