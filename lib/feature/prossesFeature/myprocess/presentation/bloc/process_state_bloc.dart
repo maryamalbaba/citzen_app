@@ -78,17 +78,17 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
   }
 //!
 
-  List<TransactionEntity> _applyFilter() {
-    if (_currentFilter == TransactionStatus.all) {
-      return _allTransactions;
-    }
-
-    return _allTransactions
-        .where(
-         (t) => t.status == _currentFilter.name
-        )
-        .toList();
+List<TransactionEntity> _applyFilter() {
+  if (_currentFilter == TransactionStatus.all) {
+    return _allTransactions;
   }
+
+  return _allTransactions
+      .where(
+        (t) => t.status == _currentFilter.apiValue,
+      )
+      .toList();
+}
 //!
 
   Future<void> _onLoadMoreTransactions(
